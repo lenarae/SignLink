@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -87,7 +88,7 @@ fun AppErrorCard(
                             ErrorType.NO_DEVICE_FOUND     -> Icons.Filled.Search
                             ErrorType.MICROPHONE_PERMISSION -> Icons.Filled.MicOff
                             ErrorType.DATABASE_ERROR       -> Icons.Filled.Storage
-                            ErrorType.TTS_UNAVAILABLE      -> Icons.Filled.VolumeOff
+                            ErrorType.TTS_UNAVAILABLE      -> Icons.AutoMirrored.Filled.VolumeOff
                             ErrorType.NETWORK_ERROR        -> Icons.Filled.WifiOff
                             ErrorType.UNKNOWN              -> Icons.Filled.ErrorOutline
                         },

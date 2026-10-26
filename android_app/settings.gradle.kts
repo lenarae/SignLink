@@ -21,6 +21,12 @@ pluginManagement {
     }
 }
 
+plugins {
+    // This plugin allows Gradle to automatically download the required JDK (Java 17)
+    // if it's not found on your machine.
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

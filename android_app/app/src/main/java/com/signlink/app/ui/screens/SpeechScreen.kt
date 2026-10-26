@@ -45,6 +45,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -124,7 +126,7 @@ fun SpeechScreen(navController: NavHostController) {
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 },
                 actions = {
@@ -360,7 +362,7 @@ private fun MicSection(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = when {
-                            isTtsSpeaking -> Icons.Filled.VolumeUp
+                            isTtsSpeaking -> Icons.AutoMirrored.Filled.VolumeUp
                             isListening   -> Icons.Filled.MicOff
                             else          -> Icons.Filled.Mic
                         },
@@ -500,7 +502,7 @@ private fun TranscriptCard(
                     // Speak this entry
                     IconButton(onClick = onSpeak, modifier = Modifier.size(32.dp)) {
                         Icon(
-                            Icons.Filled.VolumeUp, "Speak",
+                            Icons.AutoMirrored.Filled.VolumeUp, "Speak",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
                         )

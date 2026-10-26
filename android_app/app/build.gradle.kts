@@ -25,6 +25,11 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+// Force Gradle to use Java 17 toolchain from a full JDK (includes jlink)
+kotlin {
+    jvmToolchain(17)
+}
+
 configure<ApplicationExtension> {
     // Your app's unique identifier - must match your package
     namespace = "com.signlink.app"
