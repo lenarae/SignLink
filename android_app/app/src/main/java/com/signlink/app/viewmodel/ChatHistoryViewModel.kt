@@ -11,7 +11,7 @@ import com.signlink.app.data.local.ChatDao
 import com.signlink.app.data.local.MessageSource
 import com.signlink.app.data.local.SessionSummary
 import com.signlink.app.data.repository.ChatRepository
-import com.signlink.app.data.local.ChatRetentionPolicy
+import com.signlink.app.data.repository.RetentionPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -82,7 +82,7 @@ class ChatHistoryViewModel @Inject constructor(
     fun deleteAllMessages() {
         viewModelScope.launch { chatRepository.deleteAllMessages(); hideDeleteAllDialog() }
     }
-    fun applyRetentionPolicy(policy: ChatRetentionPolicy) {
+    fun applyRetentionPolicy(policy: RetentionPolicy) {
         viewModelScope.launch { chatRepository.applyRetentionPolicy(policy) }
     }
 

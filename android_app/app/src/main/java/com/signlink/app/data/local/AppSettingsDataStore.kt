@@ -1,67 +1,92 @@
+// ============================================================
+// File: data/local/AppSettingsDataStore.kt  [FIXED]
+// Purpose: Reads and writes user preferences via DataStore.
+//
+// FIX: Removed @Inject constructor and @Singleton annotations.
+// DatabaseModule now provides this as a @Singleton explicitly,
+// which is the correct pattern when you need constructor args
+// (Context) that Hilt can't infer automatically.
+// ============================================================
+
 package com.signlink.app.data.local
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.signlink.app.data.repository.RetentionPolicy
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
-enum class ChatRetentionPolicy {
-    FOREVER,    // Never auto-delete
-    ONE_DAY,    // Delete messages older than 24 hours
-    ONE_MONTH,  // Delete messages older than 30 days
-    DISABLED    // Don't save any messages
-}
+// The DataStore file is created once per Context via this extension property.
+// Using a top-level property prevents multiple DataStore instances for the same file.
+private val Context.dataStore: DataStore<Preferences>
+        by preferencesDataStore(name = "signlink_settings")
 
-data class AppSettings(
-    val darkMode: Boolean = false,
-    val highContrast: Boolean = false,
-    val storageEnabled: Boolean = true,
-    val retentionPolicy: ChatRetentionPolicy = ChatRetentionPolicy.FOREVER
-)
+class AppSettingsDataStore(private val context: Context) {
 
-private val Context.dataStore by preferencesDataStore(name = "settings")
+    // ── Settings flow ─────────────────────────────────────────
+    // Emits a new AppSettings snapshot whenever any preference changes.
+    // .catch ensures corrupted storage emits defaults rather than crashing.
+    val settings: Flow<AppSettings> = context.dataStore.data
+        .catch { emit(emptyPreferences()) }
+        .map { prefs -> prefs.toAppSettings() }
 
-@Singleton
-class AppSettingsDataStore @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
-    private val DARK_MODE = booleanPreferencesKey("dark_mode")
-    private val HIGH_CONTRAST = booleanPreferencesKey("high_contrast")
-    private val STORAGE_ENABLED = booleanPreferencesKey("storage_enabled")
-    private val RETENTION_POLICY = stringPreferencesKey("retention_policy")
+    // ── Write functions (one per preference) ──────────────────
 
-    val settings: Flow<AppSettings> = context.dataStore.data.map { preferences ->
-        AppSettings(
-            darkMode = preferences[DARK_MODE] ?: false,
-            highContrast = preferences[HIGH_CONTRAST] ?: false,
-            storageEnabled = preferences[STORAGE_ENABLED] ?: true,
-            retentionPolicy = try {
-                ChatRetentionPolicy.valueOf(preferences[RETENTION_POLICY] ?: ChatRetentionPolicy.FOREVER.name)
-            } catch (e: Exception) {
-                ChatRetentionPolicy.FOREVER
-            }
-        )
-    }
+    suspend fun setDarkMode(enabled: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.DARK_MODE] = enabled }
 
-    suspend fun updateDarkMode(enabled: Boolean) {
-        context.dataStore.edit { it[DARK_MODE] = enabled }
-    }
+    suspend fun setHighContrast(enabled: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.HIGH_CONTRAST] = enabled }
 
-    suspend fun updateHighContrast(enabled: Boolean) {
-        context.dataStore.edit { it[HIGH_CONTRAST] = enabled }
-    }
+    suspend fun setTextSizeScale(scale: Float) =
+        context.dataStore.edit { it[SettingsKeys.TEXT_SIZE_SCALE] = scale }
 
-    suspend fun updateStorageEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[STORAGE_ENABLED] = enabled }
-    }
+    suspend fun setVibrationEnabled(enabled: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.VIBRATION_ENABLED] = enabled }
 
-    suspend fun updateRetentionPolicy(policy: ChatRetentionPolicy) {
-        context.dataStore.edit { it[RETENTION_POLICY] = policy.name }
-    }
+    suspend fun setTtsEnabled(enabled: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.TTS_ENABLED] = enabled }
+
+    suspend fun setTtsRate(rate: Float) =
+        context.dataStore.edit { it[SettingsKeys.TTS_RATE] = rate }
+
+    suspend fun setTtsPitch(pitch: Float) =
+        context.dataStore.edit { it[SettingsKeys.TTS_PITCH] = pitch }
+
+    suspend fun setRetentionPolicy(policy: RetentionPolicy) =
+        context.dataStore.edit { it[SettingsKeys.RETENTION_POLICY] = policy.name }
+
+    suspend fun setStorageEnabled(enabled: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.STORAGE_ENABLED] = enabled }
+
+    suspend fun setAutoConnect(enabled: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.AUTO_CONNECT] = enabled }
+
+    suspend fun setShowConfidence(show: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.SHOW_CONFIDENCE] = show }
+
+    suspend fun resetToDefaults() =
+        context.dataStore.edit { it.clear() }
+
+    // ── Mapping helper ─────────────────────────────────────────
+    private fun Preferences.toAppSettings() = AppSettings(
+        darkMode         = this[SettingsKeys.DARK_MODE]         ?: false,
+        highContrast     = this[SettingsKeys.HIGH_CONTRAST]     ?: false,
+        textSizeScale    = this[SettingsKeys.TEXT_SIZE_SCALE]   ?: 1.0f,
+        vibrationEnabled = this[SettingsKeys.VIBRATION_ENABLED] ?: true,
+        ttsEnabled       = this[SettingsKeys.TTS_ENABLED]       ?: true,
+        ttsRate          = this[SettingsKeys.TTS_RATE]          ?: 1.0f,
+        ttsPitch         = this[SettingsKeys.TTS_PITCH]         ?: 1.0f,
+        retentionPolicy  = this[SettingsKeys.RETENTION_POLICY]
+            ?.let { runCatching { RetentionPolicy.valueOf(it) }.getOrNull() }
+            ?: RetentionPolicy.FOREVER,
+        storageEnabled   = this[SettingsKeys.STORAGE_ENABLED]   ?: true,
+        autoConnect      = this[SettingsKeys.AUTO_CONNECT]      ?: true,
+        showConfidence   = this[SettingsKeys.SHOW_CONFIDENCE]   ?: true
+    )
 }

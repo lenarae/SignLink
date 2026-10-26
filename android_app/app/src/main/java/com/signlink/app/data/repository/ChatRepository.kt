@@ -15,12 +15,10 @@
 
 package com.signlink.app.data.repository
 
-import com.signlink.app.data.local.AppSettings
 import com.signlink.app.data.local.AppSettingsDataStore
 import com.signlink.app.data.local.ChatDao
 import com.signlink.app.data.local.ChatMessage
 import com.signlink.app.data.local.MessageSource
-import com.signlink.app.data.local.ChatRetentionPolicy
 import com.signlink.app.data.local.SessionSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +29,13 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+
+enum class RetentionPolicy {
+    FOREVER,    // Never auto-delete
+    ONE_DAY,    // Delete messages older than 24 hours
+    ONE_MONTH,  // Delete messages older than 30 days
+    DISABLED    // Don't save any messages
+}
 
 @Singleton
 class ChatRepository @Inject constructor(
@@ -114,13 +119,13 @@ class ChatRepository @Inject constructor(
      *   (a) SignLinkApp.onCreate() on every app start   ← NEW automatic call
      *   (b) SettingsViewModel when user changes policy  ← existing call
      */
-    suspend fun applyRetentionPolicy(policy: ChatRetentionPolicy) {
+    suspend fun applyRetentionPolicy(policy: RetentionPolicy) {
         val cutoffMs: Long = when (policy) {
-            ChatRetentionPolicy.FOREVER  -> return   // nothing to delete
-            ChatRetentionPolicy.DISABLED -> return   // handled at insert time
-            ChatRetentionPolicy.ONE_DAY  ->
+            RetentionPolicy.FOREVER  -> return   // nothing to delete
+            RetentionPolicy.DISABLED -> return   // handled at insert time
+            RetentionPolicy.ONE_DAY  ->
                 System.currentTimeMillis() - 24L * 60 * 60 * 1000
-            ChatRetentionPolicy.ONE_MONTH ->
+            RetentionPolicy.ONE_MONTH ->
                 System.currentTimeMillis() - 30L * 24L * 60 * 60 * 1000
         }
         chatDao.deleteMessagesBefore(cutoffMs)

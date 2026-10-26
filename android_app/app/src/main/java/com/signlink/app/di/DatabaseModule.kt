@@ -39,7 +39,7 @@ object DatabaseModule {
     )
         // In development: wipe and rebuild if schema changes.
         // Before release: replace with proper Migration objects.
-        .fallbackToDestructiveMigration(true)
+        .fallbackToDestructiveMigration(dropAllTables = true)
         .build()
 
     @Provides
