@@ -1,0 +1,19 @@
+<!--
+    File: res/values/themes.xml
+    Purpose: XML theme required by Android's legacy theming system.
+
+    Even though we use Compose for UI, Android still needs an XML
+    theme for:
+      - The splash screen (before Compose loads)
+      - System window decorations (status bar, nav bar)
+      - WindowSoftInputMode behavior
+
+    We inherit from Theme.Material3.DayNight which provides
+    Material 3 defaults, then override with our app name.
+-->
+<resources>
+    <style name="Theme.SignLink" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- The action bar is hidden because Compose handles its own top bars -->
+        <!-- All further theming is done in Compose via SignLinkTheme -->
+    </style>
+</resources>
