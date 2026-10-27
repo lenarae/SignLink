@@ -25,8 +25,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,9 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -119,63 +123,97 @@ fun BluetoothScreen(navController: NavHostController) {
                         TextButton(onClick = { viewModel.disconnect() }) {
                             Text(
                                 text  = "Disconnect",
-                                color = SignLinkDisconnected,
+                                color = SignLinkTheme.colors.error,
                                 style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
+                    IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
+                        Icon(Icons.Filled.Settings, "Settings")
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = Color.Transparent
                 )
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color.Transparent
     ) { padding ->
 
-        // ── Route to correct state UI ─────────────────────────
-        // Each connection state gets its own dedicated composable
-        when (val state = connectionState) {
-
-            is ConnectionState.Disconnected -> DisconnectedContent(
-                devices        = discoveredDevices,
-                isScanning     = isScanning,
-                onScan         = { viewModel.startScan() },
-                onStopScan     = { viewModel.stopScan() },
-                onConnect      = { device -> viewModel.connect(device) },
-                onDemoMode     = { viewModel.connectSimulated() },
-                padding        = padding
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = if (isSystemInDarkTheme()) {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        } else {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        }
+                    )
+                )
+        ) {
+            // Decorative orbs
+            Box(
+                modifier = Modifier
+                    .size(300.dp)
+                    .offset(x = (-150).dp, y = (-50).dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
             )
 
-            is ConnectionState.Scanning -> DisconnectedContent(
-                devices        = discoveredDevices,
-                isScanning     = true,
-                onScan         = { viewModel.startScan() },
-                onStopScan     = { viewModel.stopScan() },
-                onConnect      = { device -> viewModel.connect(device) },
-                onDemoMode     = { viewModel.connectSimulated() },
-                padding        = padding
-            )
+            // ── Route to correct state UI ─────────────────────────
+            // Each connection state gets its own dedicated composable
+            when (val state = connectionState) {
 
-            is ConnectionState.Connecting -> ConnectingContent(
-                deviceName = state.deviceName,
-                padding    = padding
-            )
+                is ConnectionState.Disconnected -> DisconnectedContent(
+                    devices        = discoveredDevices,
+                    isScanning     = isScanning,
+                    onScan         = { viewModel.startScan() },
+                    onStopScan     = { viewModel.stopScan() },
+                    onConnect      = { device -> viewModel.connect(device) },
+                    onDemoMode     = { viewModel.connectSimulated() },
+                    padding        = padding
+                )
 
-            is ConnectionState.Connected -> ConnectedContent(
-                device         = state.device,
-                onDisconnect   = { viewModel.disconnect() },
-                onGoTranslate  = { navController.navigate(Screen.Translation.route) },
-                onCalibrate    = { navController.navigate(Screen.Calibration.route) },
-                padding        = padding
-            )
+                is ConnectionState.Scanning -> DisconnectedContent(
+                    devices        = discoveredDevices,
+                    isScanning     = true,
+                    onScan         = { viewModel.startScan() },
+                    onStopScan     = { viewModel.stopScan() },
+                    onConnect      = { device -> viewModel.connect(device) },
+                    onDemoMode     = { viewModel.connectSimulated() },
+                    padding        = padding
+                )
 
-            is ConnectionState.Failed -> FailedContent(
-                reason    = state.reason,
-                onRetry   = { viewModel.retry() },
-                onDemoMode = { viewModel.connectSimulated() },
-                padding   = padding
-            )
+                is ConnectionState.Connecting -> ConnectingContent(
+                    deviceName = state.deviceName,
+                    padding    = padding
+                )
+
+                is ConnectionState.Connected -> ConnectedContent(
+                    device         = state.device,
+                    onDisconnect   = { viewModel.disconnect() },
+                    onGoTranslate  = { navController.navigate(Screen.Translation.route) },
+                    onCalibrate    = { navController.navigate(Screen.Calibration.route) },
+                    padding        = padding
+                )
+
+                is ConnectionState.Failed -> FailedContent(
+                    reason    = state.reason,
+                    onRetry   = { viewModel.retry() },
+                    onDemoMode = { viewModel.connectSimulated() },
+                    padding   = padding
+                )
+            }
         }
     }
 }
@@ -218,9 +256,7 @@ private fun DisconnectedContent(
                 onClick  = onDemoMode,
                 modifier = Modifier.fillMaxWidth(),
                 shape    = RoundedCornerShape(12.dp),
-                border   = androidx.compose.foundation.BorderStroke(
-                    1.dp, SignLinkTeal500
-                )
+                border   = null
             ) {
                 Icon(
                     Icons.Filled.PhoneAndroid,
@@ -320,11 +356,11 @@ private fun ScanHeader(
 
     Card(
         modifier  = Modifier.fillMaxWidth(),
-        shape     = RoundedCornerShape(16.dp),
+        shape     = RoundedCornerShape(24.dp),
         colors    = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
         ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Column(
             modifier = Modifier
@@ -430,27 +466,20 @@ private fun DeviceCard(
     onConnect: () -> Unit
 ) {
     val isSignLink = device.isSignLinkDevice
-    val borderColor = if (isSignLink) SignLinkTeal500 else Color.Transparent
 
     Card(
         onClick   = onConnect,
         modifier  = Modifier
             .fillMaxWidth()
-            .then(
-                if (isSignLink) Modifier.border(
-                    width = 1.5.dp,
-                    color = borderColor,
-                    shape = RoundedCornerShape(12.dp)
-                ) else Modifier
-            ),
-        shape     = RoundedCornerShape(12.dp),
+            .then(Modifier),
+        shape     = RoundedCornerShape(20.dp),
         colors    = CardDefaults.cardColors(
             containerColor = if (isSignLink)
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
             else
-                MaterialTheme.colorScheme.surface
+                MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
         ),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
             modifier = Modifier
@@ -526,9 +555,9 @@ private fun DeviceCard(
                         text  = device.signalLabel,
                         style = MaterialTheme.typography.bodySmall,
                         color = when (device.signalLabel) {
-                            "Excellent", "Good" -> SignLinkConnected
+                            "Excellent", "Good" -> SignLinkTheme.colors.success
                             "Fair"              -> SignLinkConnecting
-                            else                -> SignLinkDisconnected
+                            else                -> SignLinkTheme.colors.error
                         }
                     )
                 }
@@ -541,9 +570,9 @@ private fun DeviceCard(
                         .height(3.dp)
                         .clip(RoundedCornerShape(2.dp)),
                     color      = when (device.signalLabel) {
-                        "Excellent", "Good" -> SignLinkConnected
+                        "Excellent", "Good" -> SignLinkTheme.colors.success
                         "Fair"              -> SignLinkConnecting
-                        else                -> SignLinkDisconnected
+                        else                -> SignLinkTheme.colors.error
                     },
                     trackColor = MaterialTheme.colorScheme.surfaceVariant
                 )
@@ -620,96 +649,123 @@ private fun ConnectedContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(padding)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // ── Success card ──────────────────────────────────────
-        Card(
-            modifier  = Modifier.fillMaxWidth(),
-            shape     = RoundedCornerShape(16.dp),
-            colors    = CardDefaults.cardColors(
-                containerColor = SignLinkConnected.copy(alpha = 0.1f)
-            )
+        // ── Success section ──────────────────────────────────────
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            // Green check icon (Circular)
+            val statusColor = if (isSystemInDarkTheme()) SignLinkTheme.colors.success else Color(0xFF008955)
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .background(statusColor.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
             ) {
-                // Green check icon
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(SignLinkConnected.copy(alpha = 0.15f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = SignLinkConnected,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
+                Icon(
+                    Icons.Filled.Check,
+                    contentDescription = null,
+                    tint = statusColor,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text(
                     text  = "Connected!",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.5).sp
                     ),
-                    color = SignLinkConnected
+                    color = statusColor
                 )
                 Text(
                     text      = device.displayName,
-                    style     = MaterialTheme.typography.bodyLarge,
+                    style     = MaterialTheme.typography.titleMedium,
                     color     = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
-                // Device details
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    DeviceInfoChip(label = "Signal", value = device.signalLabel)
-                    DeviceInfoChip(label = "RSSI",   value = "${device.rssi} dBm")
-                    if (device.isSimulated) {
-                        DeviceInfoChip(label = "Mode", value = "Simulated")
-                    }
+            }
+
+            // Device details Row
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                DeviceInfoChip(label = "Signal", value = device.signalLabel)
+                DeviceInfoChip(label = "RSSI",   value = "${device.rssi} dBm")
+                if (device.isSimulated) {
+                    DeviceInfoChip(label = "Mode", value = "Simulated")
                 }
             }
         }
 
+        Spacer(Modifier.height(8.dp))
+
         Text(
             text  = "What would you like to do?",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.SemiBold
+            ),
+            color = SignLinkTeal700,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
 
         // ── Quick action buttons ──────────────────────────────
-        Button(
-            onClick  = onGoTranslate,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape  = RoundedCornerShape(12.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(Icons.Filled.SignLanguage, null, modifier = Modifier.size(20.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text  = "Start Translating",
-                style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp)
-            )
-        }
+            Button(
+                onClick  = onGoTranslate,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape  = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SignLinkTeal500
+                ),
+                elevation = ButtonDefaults.buttonElevation(0.dp)
+            ) {
+                Icon(Icons.Filled.SignLanguage, null, modifier = Modifier.size(24.dp))
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text  = "Start Translating",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
 
-        OutlinedButton(
-            onClick  = onCalibrate,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
-            shape  = RoundedCornerShape(12.dp)
-        ) {
-            Icon(Icons.Filled.Tune, null, modifier = Modifier.size(20.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text  = "Calibrate Device",
-                style = MaterialTheme.typography.labelLarge
-            )
+            OutlinedButton(
+                onClick  = onCalibrate,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape  = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.5.dp, SignLinkTeal500),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = SignLinkTeal500
+                )
+            ) {
+                Icon(Icons.Filled.Tune, null, modifier = Modifier.size(22.dp))
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text  = "Calibrate Device",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
         }
 
         TextButton(
@@ -718,8 +774,10 @@ private fun ConnectedContent(
         ) {
             Text(
                 text  = "Disconnect",
-                color = SignLinkDisconnected,
-                style = MaterialTheme.typography.labelLarge
+                color = SignLinkTheme.colors.error,
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
     }
@@ -749,13 +807,13 @@ private fun FailedContent(
             modifier = Modifier
                 .size(80.dp)
                 .clip(CircleShape)
-                .background(SignLinkDisconnected.copy(alpha = 0.1f)),
+                .background(SignLinkTheme.colors.error.copy(alpha = 0.1f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 Icons.Filled.BluetoothDisabled,
                 contentDescription = null,
-                tint = SignLinkDisconnected,
+                tint = SignLinkTheme.colors.error,
                 modifier = Modifier.size(40.dp)
             )
         }
@@ -848,5 +906,27 @@ private fun DeviceInfoChip(label: String, value: String) {
             ),
             color = MaterialTheme.colorScheme.onSurface
         )
+    }
+}
+
+// ── Previews ──────────────────────────────────────────────────
+@Preview(showBackground = true)
+@Composable
+private fun ConnectedContentPreview() {
+    SignLinkTheme {
+        Surface {
+            ConnectedContent(
+                device = BleDevice(
+                    address = "00:11:22:33:44:55",
+                    name = "SignLink Wristband",
+                    rssi = -55,
+                    isSimulated = true
+                ),
+                onDisconnect = {},
+                onGoTranslate = {},
+                onCalibrate = {},
+                padding = PaddingValues(0.dp)
+            )
+        }
     }
 }

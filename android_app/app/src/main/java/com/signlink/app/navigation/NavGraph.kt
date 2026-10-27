@@ -18,6 +18,7 @@ import com.signlink.app.ui.screens.BluetoothScreen
 import com.signlink.app.ui.screens.CalibrationScreen
 import com.signlink.app.ui.screens.TranslationScreen
 import com.signlink.app.ui.screens.SpeechScreen
+import com.signlink.app.ui.screens.TextToSpeechScreen
 import com.signlink.app.ui.screens.ChatHistoryScreen
 import com.signlink.app.ui.screens.SettingsScreen
 import com.signlink.app.ui.screens.LearningScreen
@@ -48,6 +49,7 @@ fun SignLinkNavGraph(
 
         // ── Phase 6: Speech ───────────────────────────────────
         composable(Screen.Speech.route) { SpeechScreen(navController) }
+        composable(Screen.TextToSpeech.route) { TextToSpeechScreen(navController) }
 
         // ── Phase 7: Chat History ─────────────────────────────
         composable(Screen.ChatHistory.route) { ChatHistoryScreen(navController) }

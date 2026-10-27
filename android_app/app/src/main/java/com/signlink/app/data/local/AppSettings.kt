@@ -32,8 +32,7 @@ import com.signlink.app.data.repository.RetentionPolicy
  * Snapshot of all user preferences at a point in time.
  * Emitted by AppSettingsDataStore as a StateFlow.
  *
- * @param darkMode          true = force dark theme (ignores system)
- * @param highContrast      true = high-contrast mode for accessibility
+ * @param theme             Selected visual theme (Light, Dark, High Contrast, System)
  * @param textSizeScale     1.0 = normal, 1.25 = large, 1.5 = extra-large
  * @param vibrationEnabled  true = haptic feedback on gesture detected
  * @param ttsEnabled        true = auto-speak translations
@@ -46,8 +45,7 @@ import com.signlink.app.data.repository.RetentionPolicy
  * @param appVersion        Read-only display in About section
  */
 data class AppSettings(
-    val darkMode:         Boolean         = false,
-    val highContrast:     Boolean         = false,
+    val theme:            ThemeMode       = ThemeMode.SYSTEM,
     val textSizeScale:    Float           = 1.0f,
     val vibrationEnabled: Boolean         = true,
     val ttsEnabled:       Boolean         = true,
@@ -62,8 +60,7 @@ data class AppSettings(
 
 /** All DataStore preference keys — one per setting */
 object SettingsKeys {
-    val DARK_MODE          = booleanPreferencesKey("dark_mode")
-    val HIGH_CONTRAST      = booleanPreferencesKey("high_contrast")
+    val THEME              = stringPreferencesKey("theme_mode")
     val TEXT_SIZE_SCALE    = floatPreferencesKey("text_size_scale")
     val VIBRATION_ENABLED  = booleanPreferencesKey("vibration_enabled")
     val TTS_ENABLED        = booleanPreferencesKey("tts_enabled")
@@ -73,6 +70,14 @@ object SettingsKeys {
     val STORAGE_ENABLED    = booleanPreferencesKey("storage_enabled")
     val AUTO_CONNECT       = booleanPreferencesKey("auto_connect")
     val SHOW_CONFIDENCE    = booleanPreferencesKey("show_confidence")
+}
+
+/** Supported visual themes */
+enum class ThemeMode(val label: String) {
+    LIGHT("Light"),
+    DARK("Dark"),
+    SYSTEM("System"),
+    HIGH_CONTRAST("Contrast")
 }
 
 /** Human-readable text-size option for the settings UI */

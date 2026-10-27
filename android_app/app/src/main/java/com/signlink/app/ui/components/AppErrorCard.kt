@@ -28,8 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.signlink.app.ui.theme.SignLinkDisconnected
 import com.signlink.app.ui.theme.SignLinkConnecting
+import com.signlink.app.ui.theme.SignLinkTheme
 import com.signlink.app.utils.AppError
 import com.signlink.app.utils.ErrorType
 
@@ -54,9 +54,9 @@ fun AppErrorCard(
     val containerColor = if (isWarning)
         SignLinkConnecting.copy(alpha = 0.10f)
     else
-        SignLinkDisconnected.copy(alpha = 0.08f)
+        SignLinkTheme.colors.error.copy(alpha = 0.08f)
 
-    val accentColor = if (isWarning) SignLinkConnecting else SignLinkDisconnected
+    val accentColor = if (isWarning) SignLinkConnecting else SignLinkTheme.colors.error
 
     Card(
         modifier  = modifier.fillMaxWidth(),
@@ -167,8 +167,8 @@ fun ErrorBanner(
         exit    = slideOutVertically { -it } + fadeOut()
     ) {
         Surface(
-            color         = SignLinkDisconnected,
-            tonalElevation = 4.dp
+            color         = SignLinkTheme.colors.error,
+            shadowElevation = 0.dp
         ) {
             Row(
                 modifier = Modifier

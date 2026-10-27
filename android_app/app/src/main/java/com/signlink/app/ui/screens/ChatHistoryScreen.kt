@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import com.signlink.app.data.local.ChatMessage
 import com.signlink.app.data.local.MessageSource
 import com.signlink.app.data.local.SessionSummary
+import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
 import com.signlink.app.viewmodel.ChatHistoryViewModel
 import com.signlink.app.viewmodel.HistoryViewMode
@@ -124,6 +125,9 @@ fun ChatHistoryScreen(navController: NavHostController) {
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
+                        }
+                        IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
+                            Icon(Icons.Filled.Settings, "Settings")
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -258,7 +262,7 @@ private fun MessageCard(
         modifier  = Modifier.fillMaxWidth(),
         shape     = RoundedCornerShape(12.dp),
         colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(
@@ -281,9 +285,9 @@ private fun MessageCard(
                                 text  = "${(conf * 100).toInt()}% confidence",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = when {
-                                    conf >= 0.90f -> SignLinkConnected
+                                    conf >= 0.90f -> SignLinkTheme.colors.success
                                     conf >= 0.75f -> SignLinkConnecting
-                                    else          -> SignLinkDisconnected
+                                    else          -> SignLinkTheme.colors.error
                                 }
                             )
                         }
@@ -334,7 +338,7 @@ private fun SessionCard(
         modifier  = Modifier.fillMaxWidth(),
         shape     = RoundedCornerShape(12.dp),
         colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(14.dp),

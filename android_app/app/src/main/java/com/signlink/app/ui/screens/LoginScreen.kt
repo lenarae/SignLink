@@ -33,6 +33,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -133,6 +134,15 @@ fun LoginScreen(navController: NavHostController) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
                                 tint = Color.White
                             )
                         }
@@ -247,6 +257,12 @@ fun LoginScreen(navController: NavHostController) {
                         .fillMaxWidth()
                         .height(56.dp),
                     shape  = RoundedCornerShape(16.dp),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 0.dp,
+                        focusedElevation = 0.dp,
+                        hoveredElevation = 0.dp
+                    ),
                     colors = ButtonDefaults.buttonColors(
                         containerColor         = SignLinkCyan,
                         contentColor           = SignLinkTeal900,

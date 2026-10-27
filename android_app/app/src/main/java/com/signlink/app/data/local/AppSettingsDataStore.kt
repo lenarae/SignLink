@@ -37,11 +37,8 @@ class AppSettingsDataStore(private val context: Context) {
 
     // ── Write functions (one per preference) ──────────────────
 
-    suspend fun setDarkMode(enabled: Boolean) =
-        context.dataStore.edit { it[SettingsKeys.DARK_MODE] = enabled }
-
-    suspend fun setHighContrast(enabled: Boolean) =
-        context.dataStore.edit { it[SettingsKeys.HIGH_CONTRAST] = enabled }
+    suspend fun setTheme(mode: ThemeMode) =
+        context.dataStore.edit { it[SettingsKeys.THEME] = mode.name }
 
     suspend fun setTextSizeScale(scale: Float) =
         context.dataStore.edit { it[SettingsKeys.TEXT_SIZE_SCALE] = scale }
@@ -75,8 +72,9 @@ class AppSettingsDataStore(private val context: Context) {
 
     // ── Mapping helper ─────────────────────────────────────────
     private fun Preferences.toAppSettings() = AppSettings(
-        darkMode         = this[SettingsKeys.DARK_MODE]         ?: false,
-        highContrast     = this[SettingsKeys.HIGH_CONTRAST]     ?: false,
+        theme            = this[SettingsKeys.THEME]
+            ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
+            ?: ThemeMode.SYSTEM,
         textSizeScale    = this[SettingsKeys.TEXT_SIZE_SCALE]   ?: 1.0f,
         vibrationEnabled = this[SettingsKeys.VIBRATION_ENABLED] ?: true,
         ttsEnabled       = this[SettingsKeys.TTS_ENABLED]       ?: true,

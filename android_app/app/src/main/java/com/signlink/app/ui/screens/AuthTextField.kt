@@ -68,14 +68,14 @@ fun AuthTextField(
             label                = {
                 Text(
                     text  = label,
-                    color = if (isError) SignLinkDisconnected else SignLinkTeal400
+                    color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             leadingIcon          = {
                 Icon(
                     imageVector        = leadingIcon,
                     contentDescription = null,
-                    tint               = if (isError) SignLinkDisconnected else SignLinkTeal400,
+                    tint               = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier           = Modifier.size(20.dp)
                 )
             },
@@ -89,38 +89,39 @@ fun AuthTextField(
             shape                = RoundedCornerShape(12.dp),
             colors               = OutlinedTextFieldDefaults.colors(
                 // Text color
-                focusedTextColor      = Color.White,
-                unfocusedTextColor    = Color.White,
-                errorTextColor        = Color.White,
+                focusedTextColor      = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor    = MaterialTheme.colorScheme.onSurface,
+                errorTextColor        = MaterialTheme.colorScheme.onSurface,
 
-                // Container (background) — semi-transparent white
-                focusedContainerColor   = SignLinkTeal800.copy(alpha = 0.5f),
-                unfocusedContainerColor = SignLinkTeal800.copy(alpha = 0.3f),
-                errorContainerColor     = SignLinkTeal800.copy(alpha = 0.3f),
+                // Container (background) — semi-transparent
+                focusedContainerColor   = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                errorContainerColor     = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
 
-                // Border colors
-                focusedBorderColor   = SignLinkCyan,
-                unfocusedBorderColor = SignLinkTeal600,
-                errorBorderColor     = SignLinkDisconnected,
+                // Border colors (Flat design: no borders)
+                focusedBorderColor   = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                errorBorderColor     = Color.Transparent,
+                disabledBorderColor  = Color.Transparent,
 
                 // Label colors
-                focusedLabelColor   = SignLinkCyan,
-                unfocusedLabelColor = SignLinkTeal400,
-                errorLabelColor     = SignLinkDisconnected,
+                focusedLabelColor   = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                errorLabelColor     = MaterialTheme.colorScheme.error,
 
                 // Cursor
-                cursorColor      = SignLinkCyan,
-                errorCursorColor = SignLinkDisconnected
+                cursorColor      = MaterialTheme.colorScheme.primary,
+                errorCursorColor = MaterialTheme.colorScheme.error
             )
         )
 
         // Error message below the field
-        if (isError && errorMessage != null) {
+        if (errorMessage != null) {
             Spacer(Modifier.height(4.dp))
             Text(
                 text  = "⚠ $errorMessage",
                 style = MaterialTheme.typography.labelSmall,
-                color = SignLinkDisconnected
+                color = MaterialTheme.colorScheme.error
             )
         }
     }

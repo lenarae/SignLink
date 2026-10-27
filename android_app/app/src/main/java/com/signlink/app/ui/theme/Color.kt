@@ -1,65 +1,67 @@
-// ============================================================
-// File: ui/theme/Color.kt
-// Purpose: Define ALL colors used in SignLink.
-//
-// Design philosophy:
-//   - Deep navy/teal for trust and accessibility
-//   - Vibrant cyan accent for interactive elements
-//   - High contrast for users with visual impairments
-//   - Separate light and dark palette
-// ============================================================
-
 package com.signlink.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// ── Brand Primary Colors ──────────────────────────────────────
-// Deep teal - main brand color, conveys trust and calm
-val SignLinkTeal900 = Color(0xFF003D4D)
-val SignLinkTeal800 = Color(0xFF005262)
-val SignLinkTeal700 = Color(0xFF006D82)
-val SignLinkTeal600 = Color(0xFF008A9E)
-val SignLinkTeal500 = Color(0xFF00A3BB)   // ← Primary brand color
-val SignLinkTeal400 = Color(0xFF33B8CC)
-val SignLinkTeal300 = Color(0xFF66CDDD)
-val SignLinkTeal200 = Color(0xFF99E0EB)
-val SignLinkTeal100 = Color(0xFFCCF0F5)
-val SignLinkTeal50  = Color(0xFFE5F7FA)
+// ── Legacy / Compatibility Colors ─────────────────────────────
+// These are kept for components that haven't been fully refactored to M3 yet.
+val SignLinkTeal900 = Color(0xFF001D26)
+val SignLinkTeal800 = Color(0xFF002E3B)
+val SignLinkTeal700 = Color(0xFF003F4D)
+val SignLinkTeal600 = Color(0xFF005060)
+val SignLinkTeal500 = Color(0xFF006173)
+val SignLinkTeal400 = Color(0xFF008399)
+val SignLinkTeal300 = Color(0xFF4EB1C6)
+val SignLinkTeal100 = Color(0xFFADEAFF)
+val SignLinkCyan    = Color(0xFF00E5FF)
+val SignLinkCyanDark = Color(0xFF00B8D4)
 
-// ── Accent Colors ─────────────────────────────────────────────
-// Bright cyan - used for active states, CTAs, highlights
-val SignLinkCyan     = Color(0xFF00D4E8)
-val SignLinkCyanDark = Color(0xFF00A8C0)
+val SuccessListening    = Color(0xFF34A853) // Standard Success
+val SignLinkListening    = Color(0xFF4285F4)
+val SignLinkConnecting   = Color(0xFFFBBC05)
+val ErrorDisconnected    = Color(0xFFEA4335) // Standard Error
 
-// ── Status Colors ─────────────────────────────────────────────
-// These follow universal UX conventions (green=good, red=error)
-val SignLinkConnected    = Color(0xFF2DD882)  // ✅ BLE connected
-val SignLinkDisconnected = Color(0xFFFF5252)  // ❌ BLE disconnected
-val SignLinkConnecting   = Color(0xFFFFB300)  // ⏳ BLE connecting
-val SignLinkListening    = Color(0xFF00D4E8)  // 🎙️ Mic active
-val SignLinkProcessing   = Color(0xFFAB82FF)  // ⚙️ AI processing
+// ── Theme-Aware Functional Colors ──────────────────────────────
+val SuccessDark = Color(0xFF81C784)
+val ErrorDark   = Color(0xFFE57373)
+val SuccessHC   = Color(0xFF00FF00)
+val ErrorHC     = Color(0xFFFF0000)
 
-// ── Neutral Colors ────────────────────────────────────────────
-val SignLinkNeutral950 = Color(0xFF0A0E14)  // Near black
-val SignLinkNeutral900 = Color(0xFF111827)
-val SignLinkNeutral800 = Color(0xFF1F2937)
-val SignLinkNeutral700 = Color(0xFF374151)
-val SignLinkNeutral600 = Color(0xFF4B5563)
-val SignLinkNeutral500 = Color(0xFF6B7280)
-val SignLinkNeutral400 = Color(0xFF9CA3AF)
-val SignLinkNeutral300 = Color(0xFFD1D5DB)
-val SignLinkNeutral200 = Color(0xFFE5E7EB)
-val SignLinkNeutral100 = Color(0xFFF3F4F6)
-val SignLinkNeutral50  = Color(0xFFF9FAFB)
-val SignLinkWhite      = Color(0xFFFFFFFF)
+// ── Primary: Deep Teal (The Soul of SignLink) ──────────────────
+val Primary10 = Color(0xFF001F26)
+val Primary20 = Color(0xFF00363F)
+val Primary30 = Color(0xFF004F5C)
+val Primary40 = Color(0xFF00697A)
+val Primary80 = Color(0xFF55D6F3) // Light mode primary
+val Primary90 = Color(0xFFADEAFF)
+val Primary95 = Color(0xFFD6F6FF)
 
-// ── High Contrast Mode Colors ─────────────────────────────────
-// Pure black/white for maximum accessibility
+// ── Secondary: Sophisticated Slate (For Balance) ───────────────
+val Secondary10 = Color(0xFF191C1D)
+val Secondary20 = Color(0xFF2D3132)
+val Secondary40 = Color(0xFF5A6063)
+val Secondary80 = Color(0xFFBEC8CC)
+val Secondary90 = Color(0xFFDAE4E8)
+
+// ── Tertiary: Soft Violet (Modern Accents) ─────────────────────
+val Tertiary10 = Color(0xFF251431)
+val Tertiary40 = Color(0xFF6D5677)
+val Tertiary80 = Color(0xFFD9BDE3)
+val Tertiary90 = Color(0xFFF6D9FF)
+
+// ── Neutral / Surface ─────────────────────────────────────────
+val Neutral10 = Color(0xFF191C1C) // Near Black
+val Neutral20 = Color(0xFF2E3131)
+val Neutral90 = Color(0xFFE1E3E3)
+val Neutral95 = Color(0xFFEFF1F1)
+val Neutral99 = Color(0xFFFBFDFD) // Pure White-ish
+
+// ── Functional Colors (UX Conventions) ─────────────────────────
+val Success = Color(0xFF2DD882)
+val Error   = Color(0xFFBA1A1A)
+val Warning = Color(0xFFFFB300)
+
+// ── High Contrast Mode ────────────────────────────────────────
 val HighContrastBackground = Color(0xFF000000)
 val HighContrastSurface    = Color(0xFF1A1A1A)
 val HighContrastText       = Color(0xFFFFFFFF)
-val HighContrastAccent      = Color(0xFFFFFF00)  // Yellow for max contrast
-
-// ── Material 3 Seed Color ─────────────────────────────────────
-// Material 3 generates an entire color scheme from this one seed
-val SignLinkSeed = SignLinkTeal500
+val HighContrastAccent     = Color(0xFFFFFF00)

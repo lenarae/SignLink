@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
 
 // ── Data models for learning content ─────────────────────────
@@ -107,6 +108,11 @@ fun LearningScreen(navController: NavHostController) {
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
+                        Icon(Icons.Filled.Settings, "Settings")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -252,7 +258,7 @@ private fun SignPreviewCard(sign: SignPreview) {
             Text(
                 text  = sign.difficulty,
                 style = MaterialTheme.typography.labelSmall,
-                color = SignLinkConnected
+                color = SignLinkTheme.colors.success
             )
         }
     }
@@ -267,7 +273,7 @@ private fun LessonCategoryCard(category: LessonCategory) {
         colors    = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
             modifier = Modifier

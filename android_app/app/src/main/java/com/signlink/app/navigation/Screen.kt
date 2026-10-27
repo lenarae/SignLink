@@ -88,6 +88,12 @@ sealed class Screen(val route: String) {
     data object Speech : Screen("speech")
 
     /**
+     * Text-to-Speech input screen.
+     * For users to type and have it read aloud.
+     */
+    data object TextToSpeech : Screen("tts")
+
+    /**
      * Chat history browser.
      * Phase 7. Shows stored conversations from RoomDB.
      */

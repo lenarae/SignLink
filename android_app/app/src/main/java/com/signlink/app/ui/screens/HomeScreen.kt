@@ -6,21 +6,27 @@
 package com.signlink.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -49,6 +55,7 @@ fun HomeScreen(navController: NavHostController) {
         FeatureTile("Calibrate", Icons.Filled.Tune, "Set up your device", Screen.Calibration.route, isConnected),
         FeatureTile("Translate", Icons.Filled.SignLanguage, "Sign → Text & Speech", Screen.Translation.route, isConnected),
         FeatureTile("Speech Input", Icons.Filled.Mic, "Voice to text", Screen.Speech.route, true),
+        FeatureTile("Text to Speech", Icons.AutoMirrored.Filled.VolumeUp, "Type to speak", Screen.TextToSpeech.route, true),
         FeatureTile("History", Icons.Filled.History, "Past conversations", Screen.ChatHistory.route, true),
         FeatureTile("Learn Signs", Icons.Filled.School, "Practice & learn", Screen.Learning.route, true)
     )
@@ -57,7 +64,15 @@ fun HomeScreen(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Row(
+                        modifier = Modifier.clickable { 
+                            navController.navigate(Screen.Welcome.route) {
+                                popUpTo(Screen.Home.route) { inclusive = true }
+                            }
+                        },
+                        verticalAlignment = Alignment.CenterVertically, 
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
                         Box(
                             modifier = Modifier.size(36.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
@@ -75,27 +90,75 @@ fun HomeScreen(navController: NavHostController) {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color.Transparent
     ) { paddingValues ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = if (isSystemInDarkTheme()) {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        } else {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        }
+                    )
+                )
         ) {
-            ConnectionStatusCard(connectionState = connectionState, onTap = { navController.navigate(Screen.Bluetooth.route) })
+            // Decorative orbs
+            Box(
+                modifier = Modifier
+                    .size(300.dp)
+                    .offset(x = (-150).dp, y = (-50).dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+            )
 
-            Text("Features", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp, start = 4.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                ConnectionStatusCard(
+                    connectionState = connectionState,
+                    onTap = { navController.navigate(Screen.Bluetooth.route) }
+                )
 
-            features.chunked(2).forEach { row ->
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    row.forEach { feature ->
-                        FeatureTileCard(feature = feature, modifier = Modifier.weight(1f),
-                            onClick = { if (feature.enabled) navController.navigate(feature.route) })
+                Text(
+                    "Features",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp, start = 4.dp)
+                )
+
+                features.chunked(2).forEach { row ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        row.forEach { feature ->
+                            FeatureTileCard(
+                                feature = feature,
+                                modifier = Modifier.weight(1f),
+                                onClick = { if (feature.enabled) navController.navigate(feature.route) }
+                            )
+                        }
+                        if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                     }
-                    if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -103,9 +166,9 @@ fun HomeScreen(navController: NavHostController) {
 @Composable
 private fun ConnectionStatusCard(connectionState: ConnectionState, onTap: () -> Unit) {
     val statusColor = when (connectionState) {
-        is ConnectionState.Connected -> SignLinkConnected
+        is ConnectionState.Connected -> SignLinkTheme.colors.success
         is ConnectionState.Connecting, is ConnectionState.Scanning -> SignLinkConnecting
-        else -> SignLinkDisconnected
+        else -> SignLinkTheme.colors.error
     }
     val statusText = when (connectionState) {
         is ConnectionState.Connected -> "Connected — ${connectionState.device.displayName}"
@@ -127,19 +190,47 @@ private fun ConnectionStatusCard(connectionState: ConnectionState, onTap: () -> 
         is ConnectionState.Disconnected -> "Tap to connect"
     }
 
-    Card(onClick = onTap, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(2.dp)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            Box(modifier = Modifier.size(48.dp).clip(CircleShape).background(statusColor.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center) {
-                Icon(statusIcon, null, tint = statusColor, modifier = Modifier.size(26.dp))
+    Card(
+        onClick = onTap,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+        ),
+        elevation = CardDefaults.cardElevation(0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(CircleShape)
+                    .background(statusColor.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(statusIcon, null, tint = statusColor, modifier = Modifier.size(28.dp))
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text("Wristband Status", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(statusText, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = statusColor)
-                Text(actionText, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    "Wristband Status",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    statusText,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = statusColor
+                )
+                Text(
+                    actionText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Icon(Icons.Filled.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -149,20 +240,59 @@ private fun ConnectionStatusCard(connectionState: ConnectionState, onTap: () -> 
 @Composable
 private fun FeatureTileCard(feature: FeatureTile, modifier: Modifier = Modifier, onClick: () -> Unit) {
     val opacity = if (feature.enabled) 1f else 0.4f
-    Card(onClick = onClick, enabled = feature.enabled, modifier = modifier, shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface, disabledContainerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (feature.enabled) 2.dp else 0.dp)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Box(modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = opacity)), contentAlignment = Alignment.Center) {
-                Icon(feature.icon, null, tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = opacity), modifier = Modifier.size(24.dp))
+    Card(
+        onClick = onClick,
+        enabled = feature.enabled,
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+            disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = opacity * 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        feature.icon,
+                        null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = opacity),
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+                Text(
+                    feature.title,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = opacity)
+                )
+                Text(
+                    feature.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = opacity),
+                    lineHeight = 18.sp
+                )
             }
-            Text(feature.title, style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = opacity))
-            Text(feature.description, style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = opacity))
             if (!feature.enabled) {
-                Text("🔗 Connect device first", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f))
+                Text(
+                    "🔗 Connect device first",
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                )
             }
         }
     }

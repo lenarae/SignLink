@@ -66,7 +66,7 @@ fun PairDeviceScreen(navController: NavHostController) {
     }
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { },
@@ -78,18 +78,27 @@ fun PairDeviceScreen(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = Color(0xFF5F6368),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = "Back",
-                            color = Color(0xFF5F6368),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 16.sp
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                actions = {
+                    IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         }
     ) { padding ->
@@ -109,13 +118,13 @@ fun PairDeviceScreen(navController: NavHostController) {
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE8F0FE)),
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Watch,
                     contentDescription = null,
-                    tint = Color(0xFF1A73E8),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -131,14 +140,14 @@ fun PairDeviceScreen(navController: NavHostController) {
                         fontSize = 28.sp
                     ),
                     textAlign = TextAlign.Center,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = "Connect your sEMG/IMU wristband to enable sign language translation.",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = Color(0xFF5F6368),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 22.sp
                 )
             }
@@ -149,20 +158,19 @@ fun PairDeviceScreen(navController: NavHostController) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFDADCE0))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Before you start:",
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         text = "1. Turn on your wearable device\n2. Make sure Bluetooth is enabled on your phone\n3. Keep the device within 3 feet of your phone",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF3C4043),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 24.sp
                     )
                 }
@@ -178,15 +186,15 @@ fun PairDeviceScreen(navController: NavHostController) {
                     .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1A73E8),
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (isScanning) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             strokeWidth = 2.dp
                         )
                     } else {
@@ -219,7 +227,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                 Text(
                     text = "Available Devices:",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF3C4043)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(Modifier.height(16.dp))
 
@@ -231,7 +239,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                         ) {
                             Text(
                                 text = if (isScanning) "Searching..." else "No devices found",
-                                color = Color(0xFF9AA0A6),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(top = 16.dp)
                             )
@@ -246,8 +254,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                                     onClick = { viewModel.connect(device) },
                                     modifier = Modifier.fillMaxWidth().height(72.dp),
                                     shape = RoundedCornerShape(12.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFDADCE0))
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                                 ) {
                                     Row(
                                         modifier = Modifier
@@ -258,14 +265,14 @@ fun PairDeviceScreen(navController: NavHostController) {
                                         Icon(
                                             imageVector = Icons.Default.Watch,
                                             contentDescription = null,
-                                            tint = Color(0xFF5F6368),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier.size(24.dp)
                                         )
                                         Spacer(Modifier.width(16.dp))
                                         Text(
                                             text = device.displayName,
                                             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                            color = Color.Black
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     }
                                 }
@@ -285,7 +292,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                         fontWeight = FontWeight.SemiBold,
                         textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
                     ),
-                    color = Color(0xFF1A73E8)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
             

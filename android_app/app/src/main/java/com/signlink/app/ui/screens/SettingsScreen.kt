@@ -25,6 +25,8 @@
 
 package com.signlink.app.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +40,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.signlink.app.data.local.TextSizeOption
+import com.signlink.app.data.local.ThemeMode
 import com.signlink.app.data.repository.RetentionPolicy
 import com.signlink.app.viewmodel.SettingsViewModel
 
@@ -119,39 +124,49 @@ fun SettingsScreen(navController: NavHostController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
                 )
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color.Transparent
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = if (isSystemInDarkTheme()) {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        } else {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        }
+                    )
+                )
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
 
             // ── 1. APPEARANCE ──────────────────────────────────
             SettingsSection(title = "Appearance", icon = Icons.Filled.Palette) {
-
-                SettingsToggleItem(
-                    title       = "Dark Mode",
-                    subtitle    = "Switch to dark color scheme",
-                    icon        = Icons.Filled.DarkMode,
-                    checked     = settings.darkMode,
-                    onToggle    = { viewModel.setDarkMode(it) }
-                )
-                SettingsDivider()
-                SettingsToggleItem(
-                    title       = "High Contrast",
-                    subtitle    = "Maximum contrast for low vision",
-                    icon        = Icons.Filled.Contrast,
-                    checked     = settings.highContrast,
-                    onToggle    = { viewModel.setHighContrast(it) }
+                ThemeSetting(
+                    current = settings.theme,
+                    onSelect = { viewModel.setTheme(it) }
                 )
                 SettingsDivider()
                 TextSizeSetting(
@@ -278,9 +293,7 @@ fun SettingsScreen(navController: NavHostController) {
                 colors   = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error
                 ),
-                border   = androidx.compose.foundation.BorderStroke(
-                    1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-                )
+                border   = null
             ) {
                 Icon(Icons.Filled.RestartAlt, null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
@@ -290,6 +303,7 @@ fun SettingsScreen(navController: NavHostController) {
             Spacer(Modifier.height(24.dp))
         }
     }
+}
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -329,9 +343,11 @@ private fun SettingsSection(
         }
         Card(
             modifier  = Modifier.fillMaxWidth(),
-            shape     = RoundedCornerShape(14.dp),
-            colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(1.dp)
+            shape     = RoundedCornerShape(20.dp),
+            colors    = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+            ),
+            elevation = CardDefaults.cardElevation(0.dp)
         ) {
             Column(content = content)
         }
@@ -460,6 +476,57 @@ private fun SettingsSliderItem(
     }
 }
 
+// ── ThemeSetting ──────────────────────────────────────────────
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ThemeSetting(
+    current:  ThemeMode,
+    onSelect: (ThemeMode) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                Icons.Filled.Palette, null,
+                tint     = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(22.dp)
+            )
+            Text(
+                text  = "Theme",
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+            )
+        }
+        
+        val modes = ThemeMode.entries.filter { it != ThemeMode.SYSTEM }
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            modes.forEachIndexed { index, mode ->
+                SegmentedButton(
+                    selected = current == mode,
+                    onClick  = { onSelect(mode) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = modes.size
+                    ),
+                    border = SegmentedButtonDefaults.borderStroke(Color.Transparent, width = 0.dp),
+                    label = {
+                        Text(
+                            text  = mode.label,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
+
 // ── TextSizeSetting ────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -489,16 +556,18 @@ private fun TextSizeSetting(
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
         }
+        val options = TextSizeOption.entries.filter { it != TextSizeOption.SMALL }
         // Segmented buttons for text size options
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-            TextSizeOption.entries.forEachIndexed { index, option ->
+            options.forEachIndexed { index, option ->
                 SegmentedButton(
                     selected = currentOption == option,
                     onClick  = { onSelect(option) },
                     shape    = SegmentedButtonDefaults.itemShape(
                         index = index,
-                        count = TextSizeOption.entries.size
+                        count = options.size
                     ),
+                    border   = SegmentedButtonDefaults.borderStroke(Color.Transparent),
                     label = {
                         Text(
                             text  = option.label,
@@ -571,6 +640,7 @@ private fun RetentionPolicySetting(
                             enabled  = enabled,
                             onClick  = { onSelect(policy) },
                             modifier = Modifier.weight(1f),
+                            border   = null,
                             label    = {
                                 Text(
                                     text  = label,
@@ -664,7 +734,7 @@ private fun SettingsDivider() {
     HorizontalDivider(
         modifier  = Modifier.padding(horizontal = 16.dp),
         thickness = 0.5.dp,
-        color     = MaterialTheme.colorScheme.outlineVariant
+        color     = Color.Transparent
     )
 }
 

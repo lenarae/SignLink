@@ -39,6 +39,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.signlink.app.navigation.Screen
 import com.signlink.app.data.translation.TranslationEvent
 import com.signlink.app.data.translation.TranslationStatus
 import com.signlink.app.ui.theme.*
@@ -139,6 +141,9 @@ fun TranslationScreen(navController: NavHostController) {
                                 else            MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                        IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
+                            Icon(Icons.Filled.Settings, "Settings")
+                        }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background
@@ -154,63 +159,94 @@ fun TranslationScreen(navController: NavHostController) {
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color.Transparent
     ) { padding ->
-        LazyColumn(
-            modifier        = Modifier
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentPadding  = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = if (isSystemInDarkTheme()) {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        } else {
+                            listOf(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background
+                            )
+                        }
+                    )
+                )
         ) {
+            // Decorative orbs
+            Box(
+                modifier = Modifier
+                    .size(300.dp)
+                    .offset(x = (-150).dp, y = (-50).dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+            )
 
-            // ── Big latest-word display ────────────────────────
-            item {
-                LatestWordDisplay(
-                    word      = latestWord,
-                    isPaused  = isPaused,
-                    eventHistory = eventHistory
-                )
-            }
+            LazyColumn(
+                modifier        = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding  = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
 
-            // ── Full session text card ─────────────────────────
-            if (sessionText.isNotBlank()) {
+                // ── Big latest-word display ────────────────────────
                 item {
-                    SessionTextCard(
-                        text    = sessionText,
-                        onSpeak = { viewModel.speakSessionText() }
+                    LatestWordDisplay(
+                        word      = latestWord,
+                        isPaused  = isPaused,
+                        eventHistory = eventHistory
                     )
                 }
-            }
 
-            // ── Event history chips ────────────────────────────
-            if (eventHistory.isNotEmpty()) {
+                // ── Full session text card ─────────────────────────
+                if (sessionText.isNotBlank()) {
+                    item {
+                        SessionTextCard(
+                            text    = sessionText,
+                            onSpeak = { viewModel.speakSessionText() }
+                        )
+                    }
+                }
+
+                // ── Event history chips ────────────────────────────
+                if (eventHistory.isNotEmpty()) {
+                    item {
+                        EventHistoryRow(
+                            events   = eventHistory,
+                            onSpeak  = { viewModel.speakWord(it.text) }
+                        )
+                    }
+                }
+
+                // ── Bottom action buttons ──────────────────────────
                 item {
-                    EventHistoryRow(
-                        events   = eventHistory,
-                        onSpeak  = { viewModel.speakWord(it.text) }
+                    BottomActions(
+                        sessionText  = sessionText,
+                        onSpeakAll   = { viewModel.speakSessionText() },
+                        onClear      = { showClearDialog = true }
                     )
                 }
-            }
 
-            // ── Bottom action buttons ──────────────────────────
-            item {
-                BottomActions(
-                    sessionText  = sessionText,
-                    onSpeakAll   = { viewModel.speakSessionText() },
-                    onClear      = { showClearDialog = true }
-                )
-            }
-
-            // ── Empty state ────────────────────────────────────
-            if (eventHistory.isEmpty()) {
-                item {
-                    EmptyTranslationState(isPaused = isPaused)
+                // ── Empty state ────────────────────────────────────
+                if (eventHistory.isEmpty()) {
+                    item {
+                        EmptyTranslationState(isPaused = isPaused)
+                    }
                 }
-            }
 
-            // Bottom spacing
-            item { Spacer(Modifier.height(24.dp)) }
+                // Bottom spacing
+                item { Spacer(Modifier.height(24.dp)) }
+            }
         }
     }
 }
@@ -241,15 +277,14 @@ private fun StatusStrip(
     )
 
     val (statusColor, statusLabel) = when (status) {
-        TranslationStatus.LISTENING    -> SignLinkConnected to "LISTENING"
+        TranslationStatus.LISTENING    -> SignLinkTheme.colors.success to "LISTENING"
         TranslationStatus.PROCESSING   -> SignLinkConnecting to "PROCESSING"
         TranslationStatus.PAUSED       -> SignLinkConnecting to "PAUSED"
-        TranslationStatus.DISCONNECTED -> SignLinkDisconnected to "DISCONNECTED"
+        TranslationStatus.DISCONNECTED -> SignLinkTheme.colors.error to "DISCONNECTED"
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
     ) {
         Row(
             modifier = Modifier
@@ -356,22 +391,14 @@ private fun LatestWordDisplay(
             .defaultMinSize(minHeight = 180.dp),
         shape     = RoundedCornerShape(24.dp),
         colors    = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
         ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 180.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)
-                        )
-                    )
-                )
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -414,9 +441,9 @@ private fun LatestWordDisplay(
                                     .clip(CircleShape)
                                     .background(
                                         when (event.confidenceLabel) {
-                                            "High"   -> SignLinkConnected
+                                            "High"   -> SignLinkTheme.colors.success
                                             "Medium" -> SignLinkConnecting
-                                            else     -> SignLinkDisconnected
+                                            else     -> SignLinkTheme.colors.error
                                         }
                                     )
                             )
@@ -462,11 +489,11 @@ private fun SessionTextCard(
 ) {
     Card(
         modifier  = Modifier.fillMaxWidth(),
-        shape     = RoundedCornerShape(16.dp),
+        shape     = RoundedCornerShape(20.dp),
         colors    = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
         ),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -539,9 +566,7 @@ private fun EventHistoryRow(
                         MaterialTheme.colorScheme.primaryContainer
                     else
                         MaterialTheme.colorScheme.surfaceVariant,
-                    border  = if (isLatest) androidx.compose.foundation.BorderStroke(
-                        1.dp, MaterialTheme.colorScheme.primary
-                    ) else null
+                    border  = null
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -614,11 +639,7 @@ private fun BottomActions(
             colors   = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.error
             ),
-            border   = androidx.compose.foundation.BorderStroke(
-                1.dp,
-                if (sessionText.isNotBlank()) MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-                else MaterialTheme.colorScheme.outline
-            )
+            border   = null
         ) {
             Icon(
                 Icons.Filled.DeleteSweep, null,
@@ -639,10 +660,11 @@ private fun EmptyTranslationState(isPaused: Boolean) {
     if (!isPaused) {
         Card(
             modifier  = Modifier.fillMaxWidth(),
-            shape     = RoundedCornerShape(16.dp),
+            shape     = RoundedCornerShape(20.dp),
             colors    = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+            ),
+            elevation = CardDefaults.cardElevation(0.dp)
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
