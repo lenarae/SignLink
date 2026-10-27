@@ -296,9 +296,7 @@ private fun MessageCard(
                     Text(
                         text     = message.text,
                         style    = MaterialTheme.typography.bodyMedium,
-                        color    = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 4,
-                        overflow = TextOverflow.Ellipsis
+                        color    = MaterialTheme.colorScheme.onSurface
                     )
                 }
 

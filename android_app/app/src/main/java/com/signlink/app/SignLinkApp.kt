@@ -29,8 +29,9 @@ class SignLinkApp : Application() {
         super.onCreate()
 
         // Prune messages older than the user's retention setting.
-        // Runs in a background coroutine inside the repository —
-        // does not block the main thread or slow down app startup.
-        chatRepository.applyStartupRetention()
+        // We use runCatching to ensure app startup is NEVER blocked by a database issue.
+        runCatching {
+            chatRepository.applyStartupRetention()
+        }
     }
 }

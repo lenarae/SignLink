@@ -20,6 +20,7 @@ package com.signlink.app.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /** Who/what produced this message */
@@ -39,7 +40,13 @@ enum class MessageSource {
  * @param sessionId   Groups messages belonging to the same session
  * @param timestampMs Unix timestamp in milliseconds when saved
  */
-@Entity(tableName = "chat_messages")
+@Entity(
+    tableName = "chat_messages",
+    indices = [
+        Index(value = ["session_id"]),
+        Index(value = ["timestamp_ms"])
+    ]
+)
 data class ChatMessage(
     @PrimaryKey(autoGenerate = true)
     val id:          Long           = 0,

@@ -28,12 +28,22 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.signlink.app.data.repository.RetentionPolicy
 
+/** Supported user profile types */
+enum class UserType(val label: String) {
+    DEAF("Deaf"),
+    MUTE("Mute"),
+    HEARING("Hearing"),
+    LEARNER("Learner"),
+    UNDECIDED("Not Set")
+}
+
 /**
  * Snapshot of all user preferences at a point in time.
  * Emitted by AppSettingsDataStore as a StateFlow.
  *
  * @param theme             Selected visual theme (Light, Dark, High Contrast, System)
  * @param textSizeScale     1.0 = normal, 1.25 = large, 1.5 = extra-large
+ * @param userType          User profile (Deaf, Mute, Hearing, Learner)
  * @param vibrationEnabled  true = haptic feedback on gesture detected
  * @param ttsEnabled        true = auto-speak translations
  * @param ttsRate           TTS speed 0.5–2.0 (1.0 = normal)
@@ -47,6 +57,8 @@ import com.signlink.app.data.repository.RetentionPolicy
 data class AppSettings(
     val theme:            ThemeMode       = ThemeMode.SYSTEM,
     val textSizeScale:    Float           = 1.0f, // Small is baseline
+    val userType:         UserType        = UserType.UNDECIDED,
+    val onboardingCompleted: Boolean      = false,
     val vibrationEnabled: Boolean         = true,
     val ttsEnabled:       Boolean         = true,
     val ttsRate:          Float           = 1.0f,
@@ -62,6 +74,8 @@ data class AppSettings(
 object SettingsKeys {
     val THEME              = stringPreferencesKey("theme_mode")
     val TEXT_SIZE_SCALE    = floatPreferencesKey("text_size_scale")
+    val USER_TYPE          = stringPreferencesKey("user_type")
+    val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     val VIBRATION_ENABLED  = booleanPreferencesKey("vibration_enabled")
     val TTS_ENABLED        = booleanPreferencesKey("tts_enabled")
     val TTS_RATE           = floatPreferencesKey("tts_rate")
@@ -83,8 +97,8 @@ enum class ThemeMode(val label: String) {
 /** Human-readable text-size option for the settings UI */
 enum class TextSizeOption(val label: String, val scale: Float) {
     SMALL("Small",       1.0f),
-    MEDIUM("Medium",     1.2f),
-    LARGE("Large",       1.4f);
+    MEDIUM("Medium",     1.07f),
+    LARGE("Large",       1.15f);
 
     companion object {
         fun fromScale(scale: Float) = entries.minByOrNull {

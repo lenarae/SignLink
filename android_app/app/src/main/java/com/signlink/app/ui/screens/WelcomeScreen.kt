@@ -16,6 +16,8 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,11 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.signlink.app.R
 import com.signlink.app.navigation.Screen
 import kotlinx.coroutines.delay
 
@@ -129,19 +133,21 @@ fun WelcomeScreen(navController: NavHostController) {
         ) {
             Icon(
                 imageVector = Icons.Default.Settings,
-                contentDescription = "Settings",
+                contentDescription = stringResource(R.string.settings),
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         }
 
         // ── Main content column ────────────────────────────────
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(horizontal = 32.dp)
-                .padding(top = 68.dp, bottom = 90.dp),
+                .padding(top = 68.dp, bottom = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically)
+            verticalArrangement = Arrangement.spacedBy(48.dp)
         ) {
 
             // ── TOP: Logo + Text section ───────────────────────
@@ -178,7 +184,7 @@ fun WelcomeScreen(navController: NavHostController) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Filled.SignLanguage,
-                                    contentDescription = "SignLink logo",
+                                    contentDescription = stringResource(R.string.app_name),
                                     tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.size(52.dp)
                                 )
@@ -194,7 +200,7 @@ fun WelcomeScreen(navController: NavHostController) {
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "SignLink",
+                            text = stringResource(R.string.app_name),
                             style = MaterialTheme.typography.displaySmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = (-1).sp,
@@ -219,7 +225,7 @@ fun WelcomeScreen(navController: NavHostController) {
                     enter = slideInVertically { it / 2 } + fadeIn()
                 ) {
                     Text(
-                        text = "Bridging the gap between\nsign language and speech",
+                        text = stringResource(R.string.welcome_tagline),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -239,12 +245,12 @@ fun WelcomeScreen(navController: NavHostController) {
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FeaturePill(emoji = "🤟", label = "Sign → Text")
-                            FeaturePill(emoji = "🔊", label = "Text-to-Speech")
+                            FeaturePill(emoji = "🤟", label = stringResource(R.string.feature_sign_to_text))
+                            FeaturePill(emoji = "🔊", label = stringResource(R.string.feature_tts))
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FeaturePill(emoji = "📡", label = "Wristband BLE")
-                            FeaturePill(emoji = "💬", label = "Chat History")
+                            FeaturePill(emoji = "📡", label = stringResource(R.string.feature_ble))
+                            FeaturePill(emoji = "💬", label = stringResource(R.string.feature_history))
                         }
                     }
                 }
@@ -277,7 +283,7 @@ fun WelcomeScreen(navController: NavHostController) {
                         )
                     ) {
                         Text(
-                            text       = "Get Started",
+                            text       = stringResource(R.string.welcome_get_started),
                             style      = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold
                             )
@@ -285,7 +291,7 @@ fun WelcomeScreen(navController: NavHostController) {
                     }
 
                     Text(
-                        text      = "SignLink v1.0 · Your privacy is protected",
+                        text      = stringResource(R.string.welcome_footer),
                         style     = MaterialTheme.typography.bodySmall,
                         color     = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,

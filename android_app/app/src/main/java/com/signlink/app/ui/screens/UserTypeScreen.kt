@@ -17,18 +17,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.signlink.app.R
+import com.signlink.app.data.local.UserType
 import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
+import com.signlink.app.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserTypeScreen(navController: NavHostController) {
-    var selectedType by remember { mutableStateOf<String?>(null) }
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    // Local state for UI selection so it starts empty every time
+    var localSelectedType by remember { mutableStateOf<UserType?>(null) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -48,7 +55,7 @@ fun UserTypeScreen(navController: NavHostController) {
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Back",
+                            text = stringResource(R.string.back),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 16.sp
                         )
@@ -58,7 +65,7 @@ fun UserTypeScreen(navController: NavHostController) {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.settings),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -71,41 +78,37 @@ fun UserTypeScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp)
-                .padding(top = 10.dp, bottom = 24.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // ── HEADER ────────────────────────────────────────
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "Tell Us About Yourself",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp
-                    ),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = "This helps us personalize your experience and enable the right features.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 22.sp
-                )
-            }
+            Text(
+                text = stringResource(R.string.user_type_title),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp
+                ),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = stringResource(R.string.user_type_subtitle),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 22.sp
+            )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(32.dp))
 
             // ── INFO BOX ──────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
                     .padding(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.Top) {
@@ -117,7 +120,7 @@ fun UserTypeScreen(navController: NavHostController) {
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "You can change this later in Settings. Your choice affects which features are shown.",
+                        text = stringResource(R.string.user_type_info),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         lineHeight = 20.sp
@@ -125,43 +128,44 @@ fun UserTypeScreen(navController: NavHostController) {
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(32.dp))
 
             // ── USER TYPE CARDS ───────────────────────────────
+            // Flex-box behavior: Use a Column that can grow but maintains uniformity
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 UserTypeCard(
-                    title = "Deaf User",
-                    description = "I use sign language and want to translate it to text and speech for others to understand.",
+                    title = stringResource(R.string.user_type_deaf_title),
+                    description = stringResource(R.string.user_type_deaf_desc),
                     icon = Icons.Default.HearingDisabled,
-                    isSelected = selectedType == "Deaf",
-                    onClick = { selectedType = "Deaf" }
+                    isSelected = localSelectedType == UserType.DEAF,
+                    onClick = { localSelectedType = UserType.DEAF }
                 )
 
                 UserTypeCard(
-                    title = "Mute User",
-                    description = "I cannot speak and want to use sign language or gestures to communicate with others.",
+                    title = stringResource(R.string.user_type_mute_title),
+                    description = stringResource(R.string.user_type_mute_desc),
                     icon = Icons.Default.Mic,
-                    isSelected = selectedType == "Mute",
-                    onClick = { selectedType = "Mute" }
+                    isSelected = localSelectedType == UserType.MUTE,
+                    onClick = { localSelectedType = UserType.MUTE }
                 )
 
                 UserTypeCard(
-                    title = "Hearing User",
-                    description = "I can hear and speak, and want to communicate with deaf or mute individuals.",
+                    title = stringResource(R.string.user_type_hearing_title),
+                    description = stringResource(R.string.user_type_hearing_desc),
                     icon = Icons.Default.Hearing,
-                    isSelected = selectedType == "Hearing",
-                    onClick = { selectedType = "Hearing" }
+                    isSelected = localSelectedType == UserType.HEARING,
+                    onClick = { localSelectedType = UserType.HEARING }
                 )
 
                 UserTypeCard(
-                    title = "Learner",
-                    description = "I want to learn sign language and practice with feedback and tutorials.",
+                    title = stringResource(R.string.user_type_learner_title),
+                    description = stringResource(R.string.user_type_learner_desc),
                     icon = Icons.Default.School,
-                    isSelected = selectedType == "Learner",
-                    onClick = { selectedType = "Learner" }
+                    isSelected = localSelectedType == UserType.LEARNER,
+                    onClick = { localSelectedType = UserType.LEARNER }
                 )
             }
 
@@ -169,11 +173,16 @@ fun UserTypeScreen(navController: NavHostController) {
 
             // ── CONTINUE BUTTON ───────────────────────────────
             Button(
-                onClick = { navController.navigate(Screen.PairDevice.route) },
-                enabled = selectedType != null,
+                onClick = { 
+                    localSelectedType?.let { type ->
+                        settingsViewModel.setUserType(type)
+                        navController.navigate(Screen.PairDevice.route)
+                    }
+                },
+                enabled = localSelectedType != null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp), // Removed extra top padding
+                    .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -183,7 +192,7 @@ fun UserTypeScreen(navController: NavHostController) {
                 )
             ) {
                 Text(
-                    text = "Continue",
+                    text = stringResource(R.string.continue_label),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -210,7 +219,7 @@ fun UserTypeCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(92.dp) // Fixed height to prevent shifting
+            .defaultMinSize(minHeight = 100.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
@@ -219,11 +228,11 @@ fun UserTypeCard(
         ),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .fillMaxSize(),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Icon square box
@@ -254,16 +263,13 @@ fun UserTypeCard(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         ),
-                        color = titleColor,
-                        maxLines = 1
+                        color = titleColor
                     )
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodySmall,
                         color = descColor,
-                        lineHeight = 16.sp,
-                        maxLines = 2,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        lineHeight = 18.sp
                     )
                 }
                 
@@ -278,7 +284,7 @@ fun UserTypeCard(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(12.dp)
+                        .padding(top = 4.dp, end = 12.dp)
                         .size(24.dp)
                 )
             }

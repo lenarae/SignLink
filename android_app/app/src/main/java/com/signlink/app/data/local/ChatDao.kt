@@ -55,11 +55,14 @@ interface ChatDao {
 
     /**
      * Get all unique session IDs (for the session list view).
-     * Ordered by the latest message in each session.
+     * Provides the latest message text, count, and timestamp for each session.
      */
     @Query("""
-        SELECT DISTINCT session_id, MAX(timestamp_ms) as latest
-        FROM chat_messages
+        SELECT session_id, 
+               MAX(timestamp_ms) as latest, 
+               COUNT(*) as count,
+               (SELECT text FROM chat_messages WHERE session_id = m.session_id ORDER BY timestamp_ms DESC LIMIT 1) as snippet
+        FROM chat_messages m
         GROUP BY session_id
         ORDER BY latest DESC
     """)
@@ -112,5 +115,7 @@ interface ChatDao {
  */
 data class SessionSummary(
     @ColumnInfo(name = "session_id") val sessionId: String,
-    @ColumnInfo(name = "latest")     val latest:    Long
+    @ColumnInfo(name = "latest")     val latest:    Long,
+    @ColumnInfo(name = "count")      val count:     Int,
+    @ColumnInfo(name = "snippet")    val snippet:   String?
 )

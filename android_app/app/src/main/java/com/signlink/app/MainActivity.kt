@@ -10,13 +10,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.signlink.app.data.local.AppSettingsDataStore
+import com.signlink.app.navigation.Screen
 import com.signlink.app.navigation.SignLinkNavGraph
 import com.signlink.app.ui.theme.SignLinkTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,21 +39,35 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            // Collect settings as Compose State — any change triggers recomposition
-            val settings by settingsDataStore.settings.collectAsState(
-                initial = com.signlink.app.data.local.AppSettings()
-            )
+            // Collect settings as Compose State
+            val settings by settingsDataStore.settings.collectAsState(initial = null)
 
-            SignLinkTheme(
-                themeMode     = settings.theme,
-                textSizeScale = settings.textSizeScale
-            ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color    = MaterialTheme.colorScheme.background
+            // Improvement #1 & #2: Smart App Launch + Navigation Stability
+            // We wait for the first DataStore emission to decide where to go.
+            // This prevents the NavHost from "flipping" start destinations.
+            if (settings == null) {
+                // Optional: Show a beautiful splash or loader
+                Box(
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
                 ) {
-                    val navController = rememberNavController()
-                    SignLinkNavGraph(navController = navController)
+                    CircularProgressIndicator()
+                }
+            } else {
+                SignLinkTheme(
+                    themeMode     = settings!!.theme,
+                    textSizeScale = settings!!.textSizeScale
+                ) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color    = MaterialTheme.colorScheme.background
+                    ) {
+                        val navController = rememberNavController()
+                        SignLinkNavGraph(
+                            navController    = navController,
+                            startDestination = Screen.Welcome.route
+                        )
+                    }
                 }
             }
         }

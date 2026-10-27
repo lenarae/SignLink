@@ -1,3 +1,131 @@
 <resources>
     <string name="app_name">SignLink</string>
+
+    <!-- General -->
+    <string name="back">Back</string>
+    <string name="continue_label">Continue</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="error">Error</string>
+    <string name="skip">Skip</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_tagline">Bridging the gap between\nsign language and speech</string>
+    <string name="welcome_get_started">Get Started</string>
+    <string name="welcome_footer">SignLink v1.0 · Your privacy is protected</string>
+    <string name="feature_sign_to_text">Sign → Text</string>
+    <string name="feature_tts">Text-to-Speech</string>
+    <string name="feature_ble">Wristband BLE</string>
+    <string name="feature_history">Chat History</string>
+
+    <!-- User Type Screen -->
+    <string name="user_type_title">Tell Us About Yourself</string>
+    <string name="user_type_subtitle">This helps us personalize your experience and enable the right features.</string>
+    <string name="user_type_info">You can change this later in Settings. Your choice affects which features are shown.</string>
+
+    <string name="user_type_deaf_title">Deaf User</string>
+    <string name="user_type_deaf_desc">I use sign language and want to translate it to text and speech for others to understand.</string>
+
+    <string name="user_type_mute_title">Mute User</string>
+    <string name="user_type_mute_desc">I cannot speak and want to use sign language or gestures to communicate with others.</string>
+
+    <string name="user_type_hearing_title">Hearing User</string>
+    <string name="user_type_hearing_desc">I can hear and speak, and want to communicate with deaf or mute individuals.</string>
+
+    <string name="user_type_learner_title">Learner</string>
+    <string name="user_type_learner_desc">I want to learn sign language and practice with feedback and tutorials.</string>
+
+    <!-- Pair Device Screen -->
+    <string name="pair_device_title">Pair Your Wearable</string>
+    <string name="pair_device_subtitle">Connect your sEMG/IMU wristband to enable sign language translation.</string>
+    <string name="pair_device_before_start">Before you start:</string>
+    <string name="pair_device_step1">1. Turn on your wearable device</string>
+    <string name="pair_device_step2">2. Make sure Bluetooth is enabled on your phone</string>
+    <string name="pair_device_step3">3. Keep the device within 3 feet of your phone</string>
+    <string name="pair_device_scan">Scan for Devices</string>
+    <string name="pair_device_scanning">Scanning…</string>
+    <string name="pair_device_available">Available Devices:</string>
+    <string name="pair_device_no_devices">No devices found</string>
+    <string name="pair_device_skip">Skip for now (limited functionality)</string>
+
+    <!-- Calibration Screen -->
+    <string name="calibration_title">Device Calibration</string>
+    <string name="calibration_subtitle">Follow the instructions to calibrate your wearable for accurate gesture recognition.</string>
+    <string name="calibration_tip">Tip: Hold each gesture steady for 3 seconds. The device vibrates when done.</string>
+    <string name="calibration_start">Start Calibration</string>
+    <string name="calibration_step_of">Step %1$d of %2$d</string>
+    <string name="calibration_hold_steady">Hold the gesture steady…</string>
+    <string name="calibration_complete_title">Calibration Complete!</string>
+    <string name="calibration_complete_desc">Your device is now calibrated.\nYou\'re ready to use SignLink!</string>
+    <string name="calibration_go_dashboard">Go to Dashboard</string>
+    <string name="calibration_failed_title">Calibration Failed</string>
+    <string name="calibration_try_again">Try Again</string>
+
+    <!-- Home Screen -->
+    <string name="home_wristband_status">Wristband Status</string>
+    <string name="home_features">Features</string>
+    <string name="home_connect_device">Connect\ndevice</string>
+
+    <!-- Features -->
+    <string name="feature_calibrate">Calibrate</string>
+    <string name="feature_calibrate_desc">Set up your device</string>
+    <string name="feature_translate">Translate</string>
+    <string name="feature_translate_desc">Sign → Text &amp; Speech</string>
+    <string name="feature_speech">Speech Input</string>
+    <string name="feature_speech_desc">Voice to text</string>
+    <string name="feature_text_to_speech">Text to Speech</string>
+    <string name="feature_text_to_speech_desc">Type to speak</string>
+    <string name="feature_history_desc">Past conversations</string>
+    <string name="feature_learn">Learn Signs</string>
+    <string name="feature_learn_desc">Practice &amp; learn</string>
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_text_size">Text size</string>
+    <string name="settings_tts">Text-to-Speech</string>
+    <string name="settings_auto_speak">Auto-speak translations</string>
+    <string name="settings_auto_speak_desc">Speak each gesture translation aloud</string>
+    <string name="settings_speech_speed">Speech speed</string>
+    <string name="settings_speech_pitch">Speech pitch</string>
+    <string name="settings_accessibility">Accessibility</string>
+    <string name="settings_vibration">Vibration feedback</string>
+    <string name="settings_vibration_desc">Vibrate when a gesture is detected</string>
+    <string name="settings_device">Device</string>
+    <string name="settings_auto_connect">Auto-reconnect</string>
+    <string name="settings_auto_connect_desc">Reconnect to last device on app start</string>
+    <string name="settings_show_confidence">Show confidence score</string>
+    <string name="settings_show_confidence_desc">Display classifier confidence % on translations</string>
+    <string name="settings_data_storage">Data &amp; Storage</string>
+    <string name="settings_save_history">Save chat history</string>
+    <string name="settings_save_history_desc">Store translations and speech locally</string>
+    <string name="settings_auto_delete">Auto-delete history</string>
+    <string name="settings_auto_delete_desc">How long to keep stored messages</string>
+    <string name="settings_clear_history">Clear all chat history</string>
+    <string name="settings_clear_history_desc">Permanently delete all stored messages</string>
+    <string name="settings_about">About</string>
+    <string name="settings_reset_all">Reset all settings to defaults</string>
+    <string name="settings_reset_confirm_title">Reset all settings?</string>
+    <string name="settings_reset_confirm_desc">All preferences will return to their default values. Your chat history will not be affected.</string>
+    <string name="settings_clear_confirm_title">Clear all chat history?</string>
+    <string name="settings_clear_confirm_desc">Every saved message, gesture translation and speech result will be permanently deleted. This cannot be undone.</string>
+    <!-- Translation Screen -->
+    <string name="translation_title">Live Translation</string>
+    <string name="status_listening">LISTENING</string>
+    <string name="status_processing">PROCESSING</string>
+    <string name="status_paused">PAUSED</string>
+    <string name="status_disconnected">DISCONNECTED</string>
+    <string name="status_speaking">Speaking</string>
+    <string name="translation_waiting">Waiting for gesture…</string>
+    <string name="translation_paused_msg">Translation paused</string>
+    <string name="translation_session_text">Session text</string>
+    <string name="translation_recent_gestures">Recent gestures — tap to replay</string>
+    <string name="translation_read_all">Read All</string>
+    <string name="translation_clear">Clear</string>
+    <string name="translation_how_it_works">How it works</string>
+    <string name="translation_step1">Make a sign language gesture with your wristband hand</string>
+    <string name="translation_step2">SignLink detects the gesture in real-time</string>
+    <string name="translation_step3">The translation appears above and is spoken aloud</string>
+    <string name="translation_step4">All words are saved in Session text for review</string>
 </resources>

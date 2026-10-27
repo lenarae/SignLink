@@ -43,6 +43,12 @@ class AppSettingsDataStore(private val context: Context) {
     suspend fun setTextSizeScale(scale: Float) =
         context.dataStore.edit { it[SettingsKeys.TEXT_SIZE_SCALE] = scale }
 
+    suspend fun setUserType(type: UserType) =
+        context.dataStore.edit { it[SettingsKeys.USER_TYPE] = type.name }
+
+    suspend fun setOnboardingCompleted(completed: Boolean) =
+        context.dataStore.edit { it[SettingsKeys.ONBOARDING_COMPLETED] = completed }
+
     suspend fun setVibrationEnabled(enabled: Boolean) =
         context.dataStore.edit { it[SettingsKeys.VIBRATION_ENABLED] = enabled }
 
@@ -76,6 +82,10 @@ class AppSettingsDataStore(private val context: Context) {
             ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
             ?: ThemeMode.SYSTEM,
         textSizeScale    = this[SettingsKeys.TEXT_SIZE_SCALE]   ?: 1.0f,
+        userType         = this[SettingsKeys.USER_TYPE]
+            ?.let { runCatching { UserType.valueOf(it) }.getOrNull() }
+            ?: UserType.UNDECIDED,
+        onboardingCompleted = this[SettingsKeys.ONBOARDING_COMPLETED] ?: false,
         vibrationEnabled = this[SettingsKeys.VIBRATION_ENABLED] ?: true,
         ttsEnabled       = this[SettingsKeys.TTS_ENABLED]       ?: true,
         ttsRate          = this[SettingsKeys.TTS_RATE]          ?: 1.0f,

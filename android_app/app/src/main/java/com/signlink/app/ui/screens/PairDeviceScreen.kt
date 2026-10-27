@@ -8,6 +8,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -21,18 +23,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.signlink.app.R
 import com.signlink.app.data.bluetooth.BleDevice
 import com.signlink.app.data.bluetooth.ConnectionState
 import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
 import com.signlink.app.viewmodel.BluetoothViewModel
+import com.signlink.app.viewmodel.SettingsViewModel
 
 private val BLUETOOTH_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
     arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
@@ -44,6 +49,8 @@ private val BLUETOOTH_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_C
 @Composable
 fun PairDeviceScreen(navController: NavHostController) {
     val viewModel: BluetoothViewModel = hiltViewModel()
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    
     val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
     val discoveredDevices by viewModel.discoveredDevices.collectAsStateWithLifecycle()
     val isScanning by viewModel.isScanning.collectAsStateWithLifecycle()
@@ -83,7 +90,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Back",
+                            text = stringResource(R.string.back),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 16.sp
                         )
@@ -93,7 +100,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.settings),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -102,17 +109,16 @@ fun PairDeviceScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp),
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Equal top spacing (Reduced by another 1/4)
-            Spacer(Modifier.height(27.dp))
-
             // ── TOP: Hero Icon ────────────────────────────────
             Box(
                 modifier = Modifier
@@ -129,12 +135,10 @@ fun PairDeviceScreen(navController: NavHostController) {
                 )
             }
 
-            Spacer(Modifier.height(24.dp))
-
             // ── HEADER ────────────────────────────────────────
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Pair Your Wearable",
+                    text = stringResource(R.string.pair_device_title),
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 28.sp
@@ -144,15 +148,13 @@ fun PairDeviceScreen(navController: NavHostController) {
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Connect your sEMG/IMU wristband to enable sign language translation.",
+                    text = stringResource(R.string.pair_device_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 22.sp
                 )
             }
-
-            Spacer(Modifier.height(32.dp))
 
             // ── INSTRUCTIONS ──────────────────────────────────
             Card(
@@ -162,21 +164,21 @@ fun PairDeviceScreen(navController: NavHostController) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Before you start:",
+                        text = stringResource(R.string.pair_device_before_start),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "1. Turn on your wearable device\n2. Make sure Bluetooth is enabled on your phone\n3. Keep the device within 3 feet of your phone",
+                        text = stringResource(R.string.pair_device_step1) + "\n" +
+                               stringResource(R.string.pair_device_step2) + "\n" +
+                               stringResource(R.string.pair_device_step3),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 24.sp
                     )
                 }
             }
-
-            Spacer(Modifier.height(32.dp))
 
             // ── SCAN BUTTON ───────────────────────────────────
             Button(
@@ -206,7 +208,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = if (isScanning) "Scanning..." else "Scan for Devices",
+                        text = if (isScanning) stringResource(R.string.pair_device_scanning) else stringResource(R.string.pair_device_scan),
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
@@ -215,79 +217,68 @@ fun PairDeviceScreen(navController: NavHostController) {
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
-
             // ── DEVICE LIST ───────────────────────────────────
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.Top
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Available Devices:",
+                    text = stringResource(R.string.pair_device_available),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(Modifier.height(16.dp))
 
-                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    if (discoveredDevices.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.TopCenter
+                if (discoveredDevices.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(100.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (isScanning) stringResource(R.string.pair_device_scanning) else stringResource(R.string.pair_device_no_devices),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                } else {
+                    discoveredDevices.forEach { device ->
+                        Card(
+                            onClick = { viewModel.connect(device) },
+                            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 72.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
-                            Text(
-                                text = if (isScanning) "Searching..." else "No devices found",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(discoveredDevices) { device ->
-                                Card(
-                                    onClick = { viewModel.connect(device) },
-                                    modifier = Modifier.fillMaxWidth().height(72.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(horizontal = 16.dp)
-                                            .fillMaxSize(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Watch,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                        Spacer(Modifier.width(16.dp))
-                                        Text(
-                                            text = device.displayName,
-                                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
-                                }
+                            Row(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Watch,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(Modifier.width(16.dp))
+                                Text(
+                                    text = device.displayName,
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         }
                     }
                 }
             }
 
-            // ── FOOTER SKIP ───────────────────────────────────
+            // Restore Skip button always - Navigates to Calibration
             TextButton(
-                onClick = { navController.navigate(Screen.Calibration.route) }
+                onClick = { 
+                    navController.navigate(Screen.Calibration.route)
+                }
             ) {
                 Text(
-                    text = "Skip for now (limited functionality)",
+                    text = stringResource(R.string.pair_device_skip),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                         textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
@@ -295,9 +286,6 @@ fun PairDeviceScreen(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            
-            // Equal bottom spacing (Reduced by another 1/4)
-            Spacer(Modifier.height(27.dp))
         }
     }
 }

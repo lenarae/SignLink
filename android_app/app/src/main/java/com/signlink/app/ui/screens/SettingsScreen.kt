@@ -43,12 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.signlink.app.R
 import com.signlink.app.data.local.TextSizeOption
 import com.signlink.app.data.local.ThemeMode
 import com.signlink.app.data.repository.RetentionPolicy
@@ -78,15 +80,15 @@ fun SettingsScreen(navController: NavHostController) {
         AlertDialog(
             onDismissRequest = { viewModel.hideResetDialog() },
             icon    = { Icon(Icons.Filled.RestartAlt, null, tint = MaterialTheme.colorScheme.error) },
-            title   = { Text("Reset all settings?") },
-            text    = { Text("All preferences will return to their default values. Your chat history will not be affected.") },
+            title   = { Text(stringResource(R.string.settings_reset_confirm_title)) },
+            text    = { Text(stringResource(R.string.settings_reset_confirm_desc)) },
             confirmButton = {
                 TextButton(onClick = { viewModel.resetToDefaults() }) {
-                    Text("Reset", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.calibration_start), color = MaterialTheme.colorScheme.error) // Fixed from calibration_failed_title
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.hideResetDialog() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.hideResetDialog() }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -96,15 +98,15 @@ fun SettingsScreen(navController: NavHostController) {
         AlertDialog(
             onDismissRequest = { viewModel.hideClearDataDialog() },
             icon    = { Icon(Icons.Filled.DeleteForever, null, tint = MaterialTheme.colorScheme.error) },
-            title   = { Text("Clear all chat history?") },
-            text    = { Text("Every saved message, gesture translation and speech result will be permanently deleted. This cannot be undone.") },
+            title   = { Text(stringResource(R.string.settings_clear_confirm_title)) },
+            text    = { Text(stringResource(R.string.settings_clear_confirm_desc)) },
             confirmButton = {
                 TextButton(onClick = { viewModel.clearAllChatData() }) {
-                    Text("Clear All", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.settings_clear_history), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.hideClearDataDialog() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.hideClearDataDialog() }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -114,13 +116,13 @@ fun SettingsScreen(navController: NavHostController) {
             TopAppBar(
                 title = {
                     Text(
-                        "Settings",
+                        stringResource(R.string.settings_title),
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -163,7 +165,7 @@ fun SettingsScreen(navController: NavHostController) {
             ) {
 
             // ── 1. APPEARANCE ──────────────────────────────────
-            SettingsSection(title = "Appearance", icon = Icons.Filled.Palette) {
+            SettingsSection(title = stringResource(R.string.settings_appearance), icon = Icons.Filled.Palette) {
                 ThemeSetting(
                     current = settings.theme,
                     onSelect = { viewModel.setTheme(it) }
@@ -176,18 +178,18 @@ fun SettingsScreen(navController: NavHostController) {
             }
 
             // ── 2. SPEECH OUTPUT (TTS) ─────────────────────────
-            SettingsSection(title = "Text-to-Speech", icon = Icons.Filled.RecordVoiceOver) {
+            SettingsSection(title = stringResource(R.string.settings_tts), icon = Icons.Filled.RecordVoiceOver) {
 
                 SettingsToggleItem(
-                    title    = "Auto-speak translations",
-                    subtitle = "Speak each gesture translation aloud",
+                    title    = stringResource(R.string.settings_auto_speak),
+                    subtitle = stringResource(R.string.settings_auto_speak_desc),
                     icon     = Icons.AutoMirrored.Filled.VolumeUp,
                     checked  = settings.ttsEnabled,
                     onToggle = { viewModel.setTtsEnabled(it) }
                 )
                 SettingsDivider()
                 SettingsSliderItem(
-                    title    = "Speech speed",
+                    title    = stringResource(R.string.settings_speech_speed),
                     icon     = Icons.Filled.Speed,
                     value    = settings.ttsRate,
                     min      = 0.5f,
@@ -199,7 +201,7 @@ fun SettingsScreen(navController: NavHostController) {
                 )
                 SettingsDivider()
                 SettingsSliderItem(
-                    title    = "Speech pitch",
+                    title    = stringResource(R.string.settings_speech_pitch),
                     icon     = Icons.Filled.GraphicEq,
                     value    = settings.ttsPitch,
                     min      = 0.5f,
@@ -212,11 +214,11 @@ fun SettingsScreen(navController: NavHostController) {
             }
 
             // ── 3. ACCESSIBILITY ───────────────────────────────
-            SettingsSection(title = "Accessibility", icon = Icons.Filled.Accessibility) {
+            SettingsSection(title = stringResource(R.string.settings_accessibility), icon = Icons.Filled.Accessibility) {
 
                 SettingsToggleItem(
-                    title    = "Vibration feedback",
-                    subtitle = "Vibrate when a gesture is detected",
+                    title    = stringResource(R.string.settings_vibration),
+                    subtitle = stringResource(R.string.settings_vibration_desc),
                     icon     = Icons.Filled.Vibration,
                     checked  = settings.vibrationEnabled,
                     onToggle = { viewModel.setVibration(it) }
@@ -224,19 +226,19 @@ fun SettingsScreen(navController: NavHostController) {
             }
 
             // ── 4. DEVICE ──────────────────────────────────────
-            SettingsSection(title = "Device", icon = Icons.Filled.Watch) {
+            SettingsSection(title = stringResource(R.string.settings_device), icon = Icons.Filled.Watch) {
 
                 SettingsToggleItem(
-                    title    = "Auto-reconnect",
-                    subtitle = "Reconnect to last device on app start",
+                    title    = stringResource(R.string.settings_auto_connect),
+                    subtitle = stringResource(R.string.settings_auto_connect_desc),
                     icon     = Icons.AutoMirrored.Filled.BluetoothSearching,
                     checked  = settings.autoConnect,
                     onToggle = { viewModel.setAutoConnect(it) }
                 )
                 SettingsDivider()
                 SettingsToggleItem(
-                    title    = "Show confidence score",
-                    subtitle = "Display classifier confidence % on translations",
+                    title    = stringResource(R.string.settings_show_confidence),
+                    subtitle = stringResource(R.string.settings_show_confidence_desc),
                     icon     = Icons.Filled.BarChart,
                     checked  = settings.showConfidence,
                     onToggle = { viewModel.setShowConfidence(it) }
@@ -244,11 +246,11 @@ fun SettingsScreen(navController: NavHostController) {
             }
 
             // ── 5. DATA & STORAGE ──────────────────────────────
-            SettingsSection(title = "Data & Storage", icon = Icons.Filled.Storage) {
+            SettingsSection(title = stringResource(R.string.settings_data_storage), icon = Icons.Filled.Storage) {
 
                 SettingsToggleItem(
-                    title    = "Save chat history",
-                    subtitle = "Store translations and speech locally",
+                    title    = stringResource(R.string.settings_save_history),
+                    subtitle = stringResource(R.string.settings_save_history_desc),
                     icon     = Icons.Filled.Save,
                     checked  = settings.storageEnabled,
                     onToggle = { viewModel.setStorageEnabled(it) }
@@ -261,8 +263,8 @@ fun SettingsScreen(navController: NavHostController) {
                 )
                 SettingsDivider()
                 SettingsActionItem(
-                    title    = "Clear all chat history",
-                    subtitle = "Permanently delete all stored messages",
+                    title    = stringResource(R.string.settings_clear_history),
+                    subtitle = stringResource(R.string.settings_clear_history_desc),
                     icon     = Icons.Filled.DeleteForever,
                     tint     = MaterialTheme.colorScheme.error,
                     onClick  = { viewModel.showClearDataDialog() }
@@ -270,7 +272,7 @@ fun SettingsScreen(navController: NavHostController) {
             }
 
             // ── 6. ABOUT ───────────────────────────────────────
-            SettingsSection(title = "About", icon = Icons.Filled.Info) {
+            SettingsSection(title = stringResource(R.string.settings_about), icon = Icons.Filled.Info) {
 
                 SettingsInfoItem(label = "App version",    value = "1.0.0")
                 SettingsDivider()
@@ -297,7 +299,7 @@ fun SettingsScreen(navController: NavHostController) {
             ) {
                 Icon(Icons.Filled.RestartAlt, null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Reset all settings to defaults", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.settings_reset_all), style = MaterialTheme.typography.labelLarge)
             }
 
             Spacer(Modifier.height(24.dp))
@@ -619,10 +621,10 @@ private fun RetentionPolicySetting(
             }
         }
         val policies = listOf(
-            RetentionPolicy.FOREVER   to "Forever",
-            RetentionPolicy.ONE_MONTH to "1 month",
             RetentionPolicy.ONE_DAY   to "1 day",
-            RetentionPolicy.DISABLED  to "Never save"
+            RetentionPolicy.ONE_WEEK  to "1 week",
+            RetentionPolicy.ONE_MONTH to "1 month",
+            RetentionPolicy.FOREVER   to "Forever"
         )
         // 2x2 grid of choice chips
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {

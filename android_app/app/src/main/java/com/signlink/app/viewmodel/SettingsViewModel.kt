@@ -28,6 +28,7 @@ import com.signlink.app.data.local.AppSettings
 import com.signlink.app.data.local.AppSettingsDataStore
 import com.signlink.app.data.local.TextSizeOption
 import com.signlink.app.data.local.ThemeMode
+import com.signlink.app.data.local.UserType
 import com.signlink.app.data.repository.ChatRepository
 import com.signlink.app.data.repository.RetentionPolicy
 import com.signlink.app.utils.TextToSpeechManager
@@ -70,6 +71,14 @@ class SettingsViewModel @Inject constructor(
 
     fun setTheme(mode: ThemeMode) {
         update { setTheme(mode) }
+    }
+
+    fun setUserType(type: UserType) {
+        update { setUserType(type) }
+    }
+
+    fun completeOnboarding() {
+        update { setOnboardingCompleted(true) }
     }
 
     fun setTextSize(option: TextSizeOption) = update { setTextSizeScale(option.scale) }

@@ -31,10 +31,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 enum class RetentionPolicy {
-    FOREVER,    // Never auto-delete
     ONE_DAY,    // Delete messages older than 24 hours
+    ONE_WEEK,   // Delete messages older than 7 days
     ONE_MONTH,  // Delete messages older than 30 days
-    DISABLED    // Don't save any messages
+    FOREVER     // Never auto-delete
 }
 
 @Singleton
@@ -121,10 +121,11 @@ class ChatRepository @Inject constructor(
      */
     suspend fun applyRetentionPolicy(policy: RetentionPolicy) {
         val cutoffMs: Long = when (policy) {
-            RetentionPolicy.FOREVER  -> return   // nothing to delete
-            RetentionPolicy.DISABLED -> return   // handled at insert time
-            RetentionPolicy.ONE_DAY  ->
+            RetentionPolicy.FOREVER   -> return   // nothing to delete
+            RetentionPolicy.ONE_DAY   ->
                 System.currentTimeMillis() - 24L * 60 * 60 * 1000
+            RetentionPolicy.ONE_WEEK  ->
+                System.currentTimeMillis() - 7L * 24L * 60 * 60 * 1000
             RetentionPolicy.ONE_MONTH ->
                 System.currentTimeMillis() - 30L * 24L * 60 * 60 * 1000
         }

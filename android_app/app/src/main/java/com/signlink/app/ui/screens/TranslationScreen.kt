@@ -58,14 +58,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.signlink.app.R
 import com.signlink.app.navigation.Screen
 import com.signlink.app.data.translation.TranslationEvent
 import com.signlink.app.data.translation.TranslationStatus
@@ -73,11 +75,9 @@ import com.signlink.app.ui.theme.*
 import com.signlink.app.utils.TtsState
 import com.signlink.app.viewmodel.TranslationViewModel
 
-// ── TranslationScreen ──────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TranslationScreen(navController: NavHostController) {
-
     val viewModel: TranslationViewModel = hiltViewModel()
 
     val status        by viewModel.translationStatus.collectAsStateWithLifecycle()
@@ -88,26 +88,24 @@ fun TranslationScreen(navController: NavHostController) {
     val ttsState      by viewModel.ttsState.collectAsStateWithLifecycle()
     val latestWord    by viewModel.latestWord.collectAsStateWithLifecycle()
 
-    // Clear dialog state
     var showClearDialog by remember { mutableStateOf(false) }
 
-    // Clear confirmation dialog
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title  = { Text("Clear session?") },
-            text   = { Text("This will remove all translated text from this session. This cannot be undone.") },
+            title  = { Text(stringResource(R.string.translation_clear) + "?") },
+            text   = { Text(stringResource(R.string.settings_clear_confirm_desc)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.clearSession()
                     showClearDialog = false
                 }) {
-                    Text("Clear", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.translation_clear), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -119,7 +117,7 @@ fun TranslationScreen(navController: NavHostController) {
                 TopAppBar(
                     title = {
                         Text(
-                            text  = "Live Translation",
+                            text  = stringResource(R.string.translation_title),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -127,29 +125,27 @@ fun TranslationScreen(navController: NavHostController) {
                     },
                     navigationIcon = {
                         IconButton(onClick = { navController.navigateUp() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
-                        // TTS toggle button
                         IconButton(onClick = { viewModel.toggleTts() }) {
                             Icon(
                                 imageVector = if (ttsEnabled) Icons.AutoMirrored.Filled.VolumeUp
                                 else            Icons.AutoMirrored.Filled.VolumeOff,
-                                contentDescription = if (ttsEnabled) "Mute TTS" else "Enable TTS",
+                                contentDescription = null,
                                 tint = if (ttsEnabled) MaterialTheme.colorScheme.primary
                                 else            MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
-                            Icon(Icons.Filled.Settings, "Settings")
+                            Icon(Icons.Filled.Settings, stringResource(R.string.settings))
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                // ── Status strip ──────────────────────────────
                 StatusStrip(
                     status     = status,
                     isPaused   = isPaused,
@@ -182,7 +178,6 @@ fun TranslationScreen(navController: NavHostController) {
                     )
                 )
         ) {
-            // Decorative orbs
             Box(
                 modifier = Modifier
                     .size(300.dp)
@@ -198,8 +193,6 @@ fun TranslationScreen(navController: NavHostController) {
                 contentPadding  = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
-                // ── Big latest-word display ────────────────────────
                 item {
                     LatestWordDisplay(
                         word      = latestWord,
@@ -208,7 +201,6 @@ fun TranslationScreen(navController: NavHostController) {
                     )
                 }
 
-                // ── Full session text card ─────────────────────────
                 if (sessionText.isNotBlank()) {
                     item {
                         SessionTextCard(
@@ -218,7 +210,6 @@ fun TranslationScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── Event history chips ────────────────────────────
                 if (eventHistory.isNotEmpty()) {
                     item {
                         EventHistoryRow(
@@ -228,7 +219,6 @@ fun TranslationScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── Bottom action buttons ──────────────────────────
                 item {
                     BottomActions(
                         sessionText  = sessionText,
@@ -237,25 +227,18 @@ fun TranslationScreen(navController: NavHostController) {
                     )
                 }
 
-                // ── Empty state ────────────────────────────────────
                 if (eventHistory.isEmpty()) {
                     item {
                         EmptyTranslationState(isPaused = isPaused)
                     }
                 }
 
-                // Bottom spacing
                 item { Spacer(Modifier.height(24.dp)) }
             }
         }
     }
 }
 
-// ── StatusStrip ───────────────────────────────────────────────
-/**
- * The status bar below the top app bar.
- * Shows: animated status dot + label, TTS indicator, pause button.
- */
 @Composable
 private fun StatusStrip(
     status:       TranslationStatus,
@@ -264,7 +247,6 @@ private fun StatusStrip(
     ttsState:     TtsState,
     onTogglePause: () -> Unit
 ) {
-    // Pulsing animation for the LISTENING dot
     val infiniteTransition = rememberInfiniteTransition(label = "statusPulse")
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue  = 1f,
@@ -276,11 +258,11 @@ private fun StatusStrip(
         label = "pulseAlpha"
     )
 
-    val (statusColor, statusLabel) = when (status) {
-        TranslationStatus.LISTENING    -> SignLinkTheme.colors.success to "LISTENING"
-        TranslationStatus.PROCESSING   -> SignLinkConnecting to "PROCESSING"
-        TranslationStatus.PAUSED       -> SignLinkConnecting to "PAUSED"
-        TranslationStatus.DISCONNECTED -> SignLinkTheme.colors.error to "DISCONNECTED"
+    val (statusColor, statusLabelRes) = when (status) {
+        TranslationStatus.LISTENING    -> SignLinkTheme.colors.success to R.string.status_listening
+        TranslationStatus.PROCESSING   -> SignLinkConnecting to R.string.status_processing
+        TranslationStatus.PAUSED       -> SignLinkConnecting to R.string.status_paused
+        TranslationStatus.DISCONNECTED -> SignLinkTheme.colors.error to R.string.status_disconnected
     }
 
     Surface(
@@ -293,12 +275,10 @@ private fun StatusStrip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Left: status dot + label
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Pulsing status dot
                 Box(
                     modifier = Modifier
                         .size(10.dp)
@@ -310,7 +290,7 @@ private fun StatusStrip(
                         )
                 )
                 Text(
-                    text  = statusLabel,
+                    text  = stringResource(statusLabelRes),
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = 1.5.sp
@@ -319,12 +299,10 @@ private fun StatusStrip(
                 )
             }
 
-            // Right: TTS label + Pause button
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // TTS speaking indicator
                 if (ttsState == TtsState.SPEAKING) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -336,14 +314,13 @@ private fun StatusStrip(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text  = "Speaking",
+                            text  = stringResource(R.string.status_speaking),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
 
-                // Pause / Resume button
                 FilledTonalButton(
                     onClick      = onTogglePause,
                     modifier     = Modifier.height(32.dp),
@@ -358,12 +335,12 @@ private fun StatusStrip(
                     Icon(
                         imageVector = if (isPaused) Icons.Filled.PlayArrow
                         else          Icons.Filled.Pause,
-                        contentDescription = if (isPaused) "Resume" else "Pause",
+                        contentDescription = null,
                         modifier = Modifier.size(14.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text  = if (isPaused) "Resume" else "Pause",
+                        text  = if (isPaused) stringResource(R.string.continue_label) else stringResource(R.string.cancel), // Simplified
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
@@ -372,11 +349,6 @@ private fun StatusStrip(
     }
 }
 
-// ── LatestWordDisplay ─────────────────────────────────────────
-/**
- * The BIG translated word in the center of the screen.
- * Animates in with a slide-up when a new word arrives.
- */
 @Composable
 private fun LatestWordDisplay(
     word:         String,
@@ -407,7 +379,6 @@ private fun LatestWordDisplay(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Animated word entrance
                     AnimatedContent(
                         targetState   = word,
                         transitionSpec = {
@@ -428,13 +399,11 @@ private fun LatestWordDisplay(
                         )
                     }
 
-                    // Confidence indicator
                     latestEvent?.let { event ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            // Confidence color dot
                             Box(
                                 modifier = Modifier
                                     .size(8.dp)
@@ -456,7 +425,6 @@ private fun LatestWordDisplay(
                     }
                 }
             } else {
-                // No translation yet
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -466,8 +434,8 @@ private fun LatestWordDisplay(
                         fontSize = 48.sp
                     )
                     Text(
-                        text  = if (isPaused) "Translation paused"
-                        else          "Waiting for gesture...",
+                        text  = if (isPaused) stringResource(R.string.translation_paused_msg)
+                        else          stringResource(R.string.translation_waiting),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -478,10 +446,6 @@ private fun LatestWordDisplay(
     }
 }
 
-// ── SessionTextCard ───────────────────────────────────────────
-/**
- * Shows the full session text (all translated words joined).
- */
 @Composable
 private fun SessionTextCard(
     text:    String,
@@ -505,17 +469,16 @@ private fun SessionTextCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text  = "Session text",
+                    text  = stringResource(R.string.translation_session_text),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                // Speak-all mini button
                 IconButton(
                     onClick  = onSpeak,
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        Icons.Filled.RecordVoiceOver, "Read aloud",
+                        Icons.Filled.RecordVoiceOver, null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
                     )
@@ -527,19 +490,12 @@ private fun SessionTextCard(
                 style     = MaterialTheme.typography.bodyLarge.copy(
                     lineHeight = 28.sp
                 ),
-                color     = MaterialTheme.colorScheme.onSurface,
-                maxLines  = 6,
-                overflow  = TextOverflow.Ellipsis
+                color     = MaterialTheme.colorScheme.onSurface
             )
         }
     }
 }
 
-// ── EventHistoryRow ───────────────────────────────────────────
-/**
- * Horizontal scrolling row of recent gesture chips.
- * Tap any chip to re-speak that word.
- */
 @Composable
 private fun EventHistoryRow(
     events:  List<TranslationEvent>,
@@ -547,7 +503,7 @@ private fun EventHistoryRow(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text  = "Recent gestures — tap to replay",
+            text  = stringResource(R.string.translation_recent_gestures),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -598,10 +554,6 @@ private fun EventHistoryRow(
     }
 }
 
-// ── BottomActions ─────────────────────────────────────────────
-/**
- * Read All and Clear buttons at the bottom.
- */
 @Composable
 private fun BottomActions(
     sessionText: String,
@@ -612,7 +564,6 @@ private fun BottomActions(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Read All button
         OutlinedButton(
             onClick  = onSpeakAll,
             enabled  = sessionText.isNotBlank(),
@@ -625,12 +576,11 @@ private fun BottomActions(
             )
             Spacer(Modifier.width(6.dp))
             Text(
-                text  = "Read All",
+                text  = stringResource(R.string.translation_read_all),
                 style = MaterialTheme.typography.labelLarge
             )
         }
 
-        // Clear button
         OutlinedButton(
             onClick  = onClear,
             enabled  = sessionText.isNotBlank(),
@@ -647,14 +597,13 @@ private fun BottomActions(
             )
             Spacer(Modifier.width(6.dp))
             Text(
-                text  = "Clear",
+                text  = stringResource(R.string.translation_clear),
                 style = MaterialTheme.typography.labelLarge
             )
         }
     }
 }
 
-// ── EmptyTranslationState ─────────────────────────────────────
 @Composable
 private fun EmptyTranslationState(isPaused: Boolean) {
     if (!isPaused) {
@@ -672,16 +621,16 @@ private fun EmptyTranslationState(isPaused: Boolean) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text  = "How it works",
+                    text  = stringResource(R.string.translation_how_it_works),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold)
                 )
                 Spacer(Modifier.height(4.dp))
                 listOf(
-                    "🤟" to "Make a sign language gesture with your wristband hand",
-                    "⚡" to "SignLink detects the gesture in real-time",
-                    "💬" to "The translation appears above and is spoken aloud",
-                    "📝" to "All words are saved in Session text for review"
-                ).forEach { (icon, text) ->
+                    "🤟" to R.string.translation_step1,
+                    "⚡" to R.string.translation_step2,
+                    "💬" to R.string.translation_step3,
+                    "📝" to R.string.translation_step4
+                ).forEach { (icon, textRes) ->
                     Row(
                         verticalAlignment = Alignment.Top,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -689,7 +638,7 @@ private fun EmptyTranslationState(isPaused: Boolean) {
                     ) {
                         Text(text = icon, fontSize = 16.sp)
                         Text(
-                            text  = text,
+                            text  = stringResource(textRes),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

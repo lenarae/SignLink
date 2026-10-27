@@ -1,5 +1,5 @@
 // ============================================================
-// File: ui/screens/HomeScreen.kt  [UPDATED — Phase 3]
+// File: ui/screens/HomeScreen.kt
 // Now observes real BLE connection state via BluetoothViewModel.
 // ============================================================
 
@@ -24,12 +24,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.signlink.app.R
 import com.signlink.app.data.bluetooth.ConnectionState
 import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
@@ -51,13 +55,13 @@ fun HomeScreen(navController: NavHostController) {
     val isConnected = connectionState is ConnectionState.Connected
 
     val features = listOf(
-        FeatureTile("Connect Device", Icons.Filled.Bluetooth, "Scan for your wristband", Screen.Bluetooth.route, true),
-        FeatureTile("Calibrate", Icons.Filled.Tune, "Set up your device", Screen.Calibration.route, isConnected),
-        FeatureTile("Translate", Icons.Filled.SignLanguage, "Sign → Text & Speech", Screen.Translation.route, isConnected),
-        FeatureTile("Speech Input", Icons.Filled.Mic, "Voice to text", Screen.Speech.route, true),
-        FeatureTile("Text to Speech", Icons.AutoMirrored.Filled.VolumeUp, "Type to speak", Screen.TextToSpeech.route, true),
-        FeatureTile("History", Icons.Filled.History, "Past conversations", Screen.ChatHistory.route, true),
-        FeatureTile("Learn Signs", Icons.Filled.School, "Practice & learn", Screen.Learning.route, true)
+        FeatureTile(stringResource(R.string.pair_device_title), Icons.Filled.Bluetooth, stringResource(R.string.pair_device_scan), Screen.Bluetooth.route, true),
+        FeatureTile(stringResource(R.string.feature_calibrate), Icons.Filled.Tune, stringResource(R.string.feature_calibrate_desc), Screen.Calibration.route, isConnected),
+        FeatureTile(stringResource(R.string.feature_translate), Icons.Filled.SignLanguage, stringResource(R.string.feature_translate_desc), Screen.Translation.route, isConnected),
+        FeatureTile(stringResource(R.string.feature_speech), Icons.Filled.Mic, stringResource(R.string.feature_speech_desc), Screen.Speech.route, true),
+        FeatureTile(stringResource(R.string.feature_text_to_speech), Icons.AutoMirrored.Filled.VolumeUp, stringResource(R.string.feature_text_to_speech_desc), Screen.TextToSpeech.route, true),
+        FeatureTile(stringResource(R.string.feature_history), Icons.Filled.History, stringResource(R.string.feature_history_desc), Screen.ChatHistory.route, true),
+        FeatureTile(stringResource(R.string.feature_learn), Icons.Filled.School, stringResource(R.string.feature_learn_desc), Screen.Learning.route, true)
     )
 
     Scaffold(
@@ -79,12 +83,12 @@ fun HomeScreen(navController: NavHostController) {
                         ) {
                             Icon(Icons.Filled.SignLanguage, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(22.dp))
                         }
-                        Text("SignLink", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold))
+                        Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold))
                     }
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
-                        Icon(Icons.Filled.Settings, "Settings")
+                        Icon(Icons.Filled.Settings, stringResource(R.string.settings))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
@@ -125,10 +129,10 @@ fun HomeScreen(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 ConnectionStatusCard(
                     connectionState = connectionState,
@@ -136,28 +140,27 @@ fun HomeScreen(navController: NavHostController) {
                 )
 
                 Text(
-                    "Features",
-                    style = MaterialTheme.typography.titleMedium,
+                    stringResource(R.string.home_features),
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp, start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp)
                 )
 
                 features.chunked(2).forEach { row ->
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         row.forEach { feature ->
                             FeatureTileCard(
                                 feature = feature,
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(1f).fillMaxHeight(),
                                 onClick = { if (feature.enabled) navController.navigate(feature.route) }
                             )
                         }
                         if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -217,7 +220,7 @@ private fun ConnectionStatusCard(connectionState: ConnectionState, onTap: () -> 
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "Wristband Status",
+                    stringResource(R.string.home_wristband_status),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -244,7 +247,7 @@ private fun FeatureTileCard(feature: FeatureTile, modifier: Modifier = Modifier,
         onClick = onClick,
         enabled = feature.enabled,
         modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
             disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
@@ -255,13 +258,13 @@ private fun FeatureTileCard(feature: FeatureTile, modifier: Modifier = Modifier,
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(14.dp))
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = opacity * 0.5f)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -269,29 +272,33 @@ private fun FeatureTileCard(feature: FeatureTile, modifier: Modifier = Modifier,
                         feature.icon,
                         null,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = opacity),
-                        modifier = Modifier.size(26.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
                 Text(
                     feature.title,
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = opacity)
                 )
                 Text(
                     feature.description,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = opacity),
-                    lineHeight = 18.sp
+                    lineHeight = 16.sp
                 )
             }
             if (!feature.enabled) {
                 Text(
-                    "🔗 Connect device first",
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                    text = stringResource(R.string.home_connect_device),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 9.sp,
+                        lineHeight = 10.sp,
+                        textAlign = TextAlign.End
+                    ),
                     color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(16.dp)
+                        .padding(12.dp)
                 )
             }
         }
