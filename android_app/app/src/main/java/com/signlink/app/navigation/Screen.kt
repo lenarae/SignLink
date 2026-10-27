@@ -44,6 +44,17 @@ sealed class Screen(val route: String) {
      */
     data object Register : Screen("register")
 
+    /**
+     * User type selection screen (Deaf, Mute, Hearing, Learner).
+     * Shown after Get Started.
+     */
+    data object UserType : Screen("user_type")
+
+    /**
+     * Bluetooth pairing screen for onboarding.
+     */
+    data object PairDevice : Screen("pair_device")
+
     // ── Main App Screens ──────────────────────────────────────
 
     /**

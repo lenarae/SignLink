@@ -76,34 +76,41 @@ data class CalibrationStep(
     val durationMs:  Long              // how long this step takes (simulated)
 )
 
-/** All 4 calibration steps defined in one place */
+/** All 5 calibration steps defined in one place */
 val CALIBRATION_STEPS = listOf(
     CalibrationStep(
         number      = 1,
-        title       = "Wrist Position",
-        description = "Hold your wrist flat and relaxed, palm facing upward. The wristband LEDs should be in contact with your skin.",
+        title       = "Rest Position",
+        description = "Keep your hand relaxed at your side",
         icon        = "🤚",
         durationMs  = 3_000
     ),
     CalibrationStep(
         number      = 2,
-        title       = "Signal Quality",
-        description = "Checking EMG and IMU sensor signal quality. Stay still while we verify the connection to each sensor electrode.",
-        icon        = "📶",
-        durationMs  = 4_000
+        title       = "Fist Gesture",
+        description = "Make a fist with your hand",
+        icon        = "✊",
+        durationMs  = 3_000
     ),
     CalibrationStep(
         number      = 3,
-        title       = "Gesture Baseline",
-        description = "Now make a relaxed fist, then open your hand slowly. Repeat this 3 times to record your personal baseline.",
-        icon        = "✊",
-        durationMs  = 5_000
+        title       = "Open Palm",
+        description = "Open your hand with palm facing forward",
+        icon        = "🖐️",
+        durationMs  = 3_000
     ),
     CalibrationStep(
         number      = 4,
-        title       = "Confirmation",
-        description = "Verifying all calibration data. Your device will be fine-tuned to your unique hand profile.",
-        icon        = "✅",
-        durationMs  = 2_000
+        title       = "Point Gesture",
+        description = "Point your index finger upward",
+        icon        = "☝️",
+        durationMs  = 3_000
+    ),
+    CalibrationStep(
+        number      = 5,
+        title       = "Wave Motion",
+        description = "Wave your hand side to side",
+        icon        = "👋",
+        durationMs  = 3_000
     )
 )

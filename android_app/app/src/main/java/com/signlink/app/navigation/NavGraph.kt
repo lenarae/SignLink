@@ -11,8 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 import com.signlink.app.ui.screens.WelcomeScreen
-import com.signlink.app.ui.screens.LoginScreen
-import com.signlink.app.ui.screens.RegisterScreen
+import com.signlink.app.ui.screens.UserTypeScreen
+import com.signlink.app.ui.screens.PairDeviceScreen
 import com.signlink.app.ui.screens.HomeScreen
 import com.signlink.app.ui.screens.BluetoothScreen
 import com.signlink.app.ui.screens.CalibrationScreen
@@ -31,8 +31,8 @@ fun SignLinkNavGraph(
 
         // ── Phase 2: Onboarding ───────────────────────────────
         composable(Screen.Welcome.route)  { WelcomeScreen(navController) }
-        composable(Screen.Login.route)    { LoginScreen(navController) }
-        composable(Screen.Register.route) { RegisterScreen(navController) }
+        composable(Screen.UserType.route) { UserTypeScreen(navController) }
+        composable(Screen.PairDevice.route) { PairDeviceScreen(navController) }
 
         // ── Phase 1: Home ─────────────────────────────────────
         composable(Screen.Home.route) { HomeScreen(navController) }

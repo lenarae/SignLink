@@ -271,32 +271,6 @@ fun LoginScreen(navController: NavHostController) {
                     }
                 }
 
-                Spacer(Modifier.height(24.dp))
-
-                // ── Register link ─────────────────────────────
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment     = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text  = "Don't have an account? ",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SignLinkTeal300
-                    )
-                    TextButton(
-                        onClick      = { navController.navigate(Screen.Register.route) },
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text  = "Sign Up",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = SignLinkCyan
-                        )
-                    }
-                }
-
                 Spacer(Modifier.height(32.dp))
             }
         }

@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SignLanguage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -142,20 +143,34 @@ fun WelcomeScreen(navController: NavHostController) {
                 .background(SignLinkTeal500.copy(alpha = 0.1f))
         )
 
+        // ── Settings Button ──────────────────────────────────
+        IconButton(
+            onClick = { navController.navigate(Screen.Settings.route) },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 40.dp, end = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                tint = Color.White.copy(alpha = 0.8f)
+            )
+        }
+
         // ── Main content column ────────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 32.dp)
-                .padding(top = 80.dp, bottom = 48.dp),
+                .padding(top = 68.dp, bottom = 90.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically)
         ) {
 
             // ── TOP: Logo + Text section ───────────────────────
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 // ── Logo ────────────────────────────────────────
@@ -172,7 +187,7 @@ fun WelcomeScreen(navController: NavHostController) {
                     // Outer ring (glow effect)
                     Box(
                         modifier = Modifier
-                            .size(120.dp)
+                            .size(100.dp)
                             .clip(CircleShape)
                             .background(SignLinkTeal500.copy(alpha = 0.2f)),
                         contentAlignment = Alignment.Center
@@ -180,7 +195,7 @@ fun WelcomeScreen(navController: NavHostController) {
                         // Inner filled circle
                         Box(
                             modifier = Modifier
-                                .size(88.dp)
+                                .size(72.dp)
                                 .clip(CircleShape)
                                 .background(
                                     Brush.radialGradient(
@@ -196,7 +211,7 @@ fun WelcomeScreen(navController: NavHostController) {
                                 imageVector = Icons.Filled.SignLanguage,
                                 contentDescription = "SignLink logo",
                                 tint = Color.White,
-                                modifier = Modifier.size(48.dp)
+                                modifier = Modifier.size(40.dp)
                             )
                         }
                     }
@@ -216,7 +231,8 @@ fun WelcomeScreen(navController: NavHostController) {
                             text = "SignLink",
                             style = MaterialTheme.typography.displaySmall.copy(
                                 fontWeight = FontWeight.Bold,
-                                letterSpacing = (-1).sp
+                                letterSpacing = (-1).sp,
+                                fontSize = 32.sp
                             ),
                             color = Color.White
                         )
@@ -224,7 +240,7 @@ fun WelcomeScreen(navController: NavHostController) {
                         // Cyan accent underline bar
                         Box(
                             modifier = Modifier
-                                .width(60.dp)
+                                .width(50.dp)
                                 .height(3.dp)
                                 .clip(RoundedCornerShape(2.dp))
                                 .background(SignLinkCyan)
@@ -243,14 +259,14 @@ fun WelcomeScreen(navController: NavHostController) {
                 ) {
                     Text(
                         text = "Bridging the gap between\nsign language and speech",
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = SignLinkTeal200,
                         textAlign = TextAlign.Center,
-                        lineHeight = 26.sp
+                        lineHeight = 22.sp
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 // ── Feature Pills ─────────────────────────────────
                 // Compact chips showing key features at a glance
@@ -260,16 +276,16 @@ fun WelcomeScreen(navController: NavHostController) {
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             FeaturePill(emoji = "🤟", label = "Sign → Text")
                             FeaturePill(emoji = "🔊", label = "Text-to-Speech")
                         }
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             FeaturePill(emoji = "📡", label = "Wristband BLE")
                             FeaturePill(emoji = "💬", label = "Chat History")
@@ -294,12 +310,14 @@ fun WelcomeScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    // Primary CTA: Get Started → Register
+                    // Primary CTA: Get Started → User Type Selection
                     Button(
-                        onClick = { navController.navigate(Screen.Register.route) },
+                        onClick = {
+                            navController.navigate(Screen.UserType.route)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
+                            .height(52.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = SignLinkCyan,
@@ -315,7 +333,7 @@ fun WelcomeScreen(navController: NavHostController) {
                         )
                     }
 
-                    // Secondary CTA: Sign In → Login
+                    /* // Secondary CTA: Sign In → Login
                     OutlinedButton(
                         onClick = { navController.navigate(Screen.Login.route) },
                         modifier = Modifier
@@ -336,7 +354,7 @@ fun WelcomeScreen(navController: NavHostController) {
                                 fontSize = 15.sp
                             )
                         )
-                    }
+                    } */
 
                     // Version / legal note
                     Text(

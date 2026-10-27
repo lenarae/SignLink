@@ -26,6 +26,7 @@
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,6 +43,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -76,111 +79,118 @@ fun CalibrationScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            Column {
+            if (sessionState !is CalibrationSessionState.Complete) {
                 TopAppBar(
-                    title = {
-                        Column {
-                            Text(
-                                text  = "Device Calibration",
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            )
-                            Text(
-                                text  = when (sessionState) {
-                                    is CalibrationSessionState.NotStarted -> "Ready to begin"
-                                    is CalibrationSessionState.InProgress ->
-                                        "Step ${(sessionState as CalibrationSessionState.InProgress).step} of ${CALIBRATION_STEPS.size}"
-                                    is CalibrationSessionState.Complete -> "Calibration complete!"
-                                    is CalibrationSessionState.Failed   -> "Calibration failed"
-                                },
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    },
+                    title = { },
                     navigationIcon = {
-                        IconButton(onClick = {
+                        TextButton(onClick = {
                             viewModel.resetCalibration()
                             navController.navigateUp()
                         }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = "Back",
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-
-                // ── Overall progress bar ───────────────────────
-                // Thin colored bar spanning full width below the top bar
-                LinearProgressIndicator(
-                    progress      = { animatedOverallProgress },
-                    modifier      = Modifier
-                        .fillMaxWidth()
-                        .height(3.dp),
-                    color         = when (sessionState) {
-                        is CalibrationSessionState.Complete -> SignLinkConnected
-                        is CalibrationSessionState.Failed   -> SignLinkDisconnected
-                        else                                -> SignLinkTeal500
-                    },
-                    trackColor    = MaterialTheme.colorScheme.surfaceVariant
-                )
             }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-
+        Box(modifier = Modifier.fillMaxSize()) {
             // ── Route based on session state ───────────────────
             when (val state = sessionState) {
 
                 is CalibrationSessionState.NotStarted -> {
-                    ReadyToStartContent(
-                        signalStrength = signalStrength,
-                        onStart        = { viewModel.startCalibration() }
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(horizontal = 24.dp, vertical = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ReadyToStartContent(
+                            onStart = { viewModel.startCalibration() },
+                            onSkip = {
+                                if (navController.currentBackStackEntry?.destination?.route == Screen.Calibration.route) {
+                                    navController.navigate(Screen.Home.route) {
+                                        popUpTo(Screen.Welcome.route) { inclusive = true }
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
 
                 is CalibrationSessionState.InProgress -> {
-                    InProgressContent(
-                        state            = state,
-                        signalStrength   = signalStrength,
-                        channelQualities = channelQualities,
-                        onCancel         = {
-                            viewModel.resetCalibration()
-                            navController.navigateUp()
-                        }
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(horizontal = 24.dp, vertical = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        InProgressContent(
+                            state = state,
+                            onCancel = {
+                                viewModel.resetCalibration()
+                                navController.navigateUp()
+                            },
+                            onSkip = {
+                                if (navController.currentBackStackEntry?.destination?.route == Screen.Calibration.route) {
+                                    navController.navigate(Screen.Home.route) {
+                                        popUpTo(Screen.Welcome.route) { inclusive = true }
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
 
                 is CalibrationSessionState.Complete -> {
                     CompleteContent(
-                        onGoTranslate = {
-                            navController.navigate(Screen.Translation.route) {
-                                popUpTo(Screen.Calibration.route) { inclusive = true }
+                        onGoHome = {
+                            if (navController.currentBackStackEntry?.destination?.route == Screen.Calibration.route) {
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(Screen.Welcome.route) { inclusive = true }
+                                }
                             }
-                        },
-                        onRecalibrate = { viewModel.resetCalibration() }
+                        }
                     )
                 }
 
                 is CalibrationSessionState.Failed -> {
-                    FailedCalibrationContent(
-                        reason  = state.reason,
-                        onRetry = { viewModel.retryCalibration() },
-                        onBack  = {
-                            viewModel.resetCalibration()
-                            navController.navigateUp()
-                        }
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(horizontal = 24.dp, vertical = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        FailedCalibrationContent(
+                            reason = state.reason,
+                            onRetry = { viewModel.retryCalibration() },
+                            onBack = {
+                                viewModel.resetCalibration()
+                                navController.navigateUp()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -189,125 +199,333 @@ fun CalibrationScreen(navController: NavHostController) {
 
 // ── ReadyToStartContent ────────────────────────────────────────
 /**
- * Pre-calibration screen showing instructions + Start button.
+ * Pre-calibration screen matching the onboarding design.
  */
 @Composable
 private fun ReadyToStartContent(
-    signalStrength: Float,
-    onStart:        () -> Unit
+    onStart: () -> Unit,
+    onSkip: () -> Unit
 ) {
-    // Hero instruction card
-    Card(
-        modifier  = Modifier.fillMaxWidth(),
-        shape     = RoundedCornerShape(20.dp),
-        colors    = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(2.dp)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        Column(
-            modifier = Modifier.padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Big wristband icon
-            Text(text = "🤟", fontSize = 56.sp)
+        // ... (hero icon etc)
 
-            Text(
-                text      = "Before we begin",
-                style     = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text      = "Calibration takes about 15 seconds.\nMake sure your wristband is:\n\n" +
-                        "• Snugly fitted — not too tight, not loose\n" +
-                        "• Electrodes touching your skin\n" +
-                        "• LEDs facing downward (toward your wrist)",
-                style     = MaterialTheme.typography.bodyMedium,
-                color     = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Start,
-                modifier  = Modifier.fillMaxWidth()
+        // Hero Icon
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFE8F0FE)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.BackHand,
+                contentDescription = null,
+                tint = Color(0xFF1A73E8),
+                modifier = Modifier.size(36.dp)
             )
         }
-    }
 
-    // Live signal preview card
-    SignalMeterCard(
-        signalStrength = signalStrength,
-        label          = "Current signal"
-    )
+        Spacer(Modifier.height(12.dp))
 
-    // Step preview list
-    StepPreviewList()
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Device Calibration",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp
+                ),
+                textAlign = TextAlign.Center,
+                color = Color.Black
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Follow the instructions to calibrate your wearable for accurate gesture recognition.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = Color(0xFF5F6368),
+                lineHeight = 22.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
 
-    Spacer(Modifier.height(8.dp))
+        // Gesture steps list - Wrapped in a weighted column to fill space but stay fixed
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 16.dp),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            CALIBRATION_STEPS.forEach { step ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFDADCE0))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Circle number
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .border(1.dp, Color(0xFFDADCE0), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = step.number.toString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF5F6368)
+                            )
+                        }
 
-    // Start button
-    Button(
-        onClick  = onStart,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        shape  = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )
-    ) {
-        Icon(Icons.Filled.PlayArrow, null, modifier = Modifier.size(20.dp))
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text  = "Begin Calibration",
-            style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp)
-        )
+                        Spacer(Modifier.width(16.dp))
+
+                        Text(
+                            text = step.title,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+
+        // Tip Card
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFFE8F0FE))
+                .border(1.dp, Color(0xFFD2E3FC), RoundedCornerShape(12.dp))
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Tip: Hold each gesture steady for 3 seconds. The device will vibrate when complete.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF1967D2),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // Start Button
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                onClick = onStart,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8))
+            ) {
+                Text(
+                    text = "Start Calibration",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+            
+            TextButton(
+                onClick = onSkip
+            ) {
+                Text(
+                    text = "Skip for now (demo mode)",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
+                    ),
+                    color = Color(0xFF1A73E8)
+                )
+            }
+        }
     }
 }
 
 // ── InProgressContent ─────────────────────────────────────────
 /**
- * Active calibration view: current step card + signal + step list.
+ * Active calibration view matching the step-by-step design.
  */
 @Composable
 private fun InProgressContent(
-    state:            CalibrationSessionState.InProgress,
-    signalStrength:   Float,
-    channelQualities: List<Float>,
-    onCancel:         () -> Unit
+    state:    CalibrationSessionState.InProgress,
+    onCancel: () -> Unit,
+    onSkip:   () -> Unit
 ) {
     val currentStepData = CALIBRATION_STEPS.getOrNull(state.step - 1)
         ?: return
 
-    // ── Current step hero card ─────────────────────────────────
-    ActiveStepCard(
-        step      = currentStepData,
-        stepState = state.stepState
-    )
 
-    // ── Signal meter ───────────────────────────────────────────
-    SignalMeterCard(
-        signalStrength = signalStrength,
-        label          = "EMG signal strength"
-    )
-
-    // ── Channel quality grid (shown during Step 2) ────────────
-    if (state.step == 2) {
-        ChannelQualityGrid(channelQualities = channelQualities)
-    }
-
-    // ── Step checklist ─────────────────────────────────────────
-    StepChecklist(currentStep = state.step, stepState = state.stepState)
-
-    Spacer(Modifier.height(4.dp))
-
-    // Cancel button (always available — Nielsen #3: user control)
-    TextButton(
-        onClick  = onCancel,
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text  = "Cancel Calibration",
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.labelLarge
-        )
+        // Hero Icon
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFE8F0FE)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.BackHand,
+                contentDescription = null,
+                tint = Color(0xFF1A73E8),
+                modifier = Modifier.size(40.dp)
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Device Calibration",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center,
+                color = Color.Black
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Step ${state.step} of ${CALIBRATION_STEPS.size}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF5F6368)
+            )
+        }
+
+        // Large Countdown Circle - Fixed size to prevent shifting
+        val remainingSeconds = when (val stepState = state.stepState) {
+            is CalibrationStepState.Running -> {
+                val totalSec = currentStepData.durationMs / 1000
+                val elapsedSec = (stepState.progress * totalSec).toInt()
+                (totalSec - elapsedSec).coerceAtLeast(1)
+            }
+            is CalibrationStepState.Done -> 0
+            else -> 3
+        }
+
+        Box(
+            modifier = Modifier
+                .size(130.dp)
+                .border(2.dp, Color(0xFF1A73E8), CircleShape)
+                .background(Color(0xFFE8F0FE).copy(alpha = 0.5f), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = remainingSeconds.toString(),
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A73E8)
+                )
+            )
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 24.dp).height(100.dp), // Fixed height container
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = currentStepData.title,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = Color.Black
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = currentStepData.description,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = Color(0xFF5F6368),
+                lineHeight = 22.sp
+            )
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Progress Bar
+            val progressValue = if (state.stepState is CalibrationStepState.Running) {
+                (state.stepState as CalibrationStepState.Running).progress
+            } else if (state.stepState is CalibrationStepState.Done) 1f else 0f
+
+            LinearProgressIndicator(
+                progress = { progressValue },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = Color.Black,
+                trackColor = Color(0xFFE5E7EB)
+            )
+            
+            Spacer(Modifier.height(12.dp))
+            
+            Text(
+                text = "Hold the gesture steady...",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF5F6368)
+            )
+        }
+
+        // Step Dot Indicators
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CALIBRATION_STEPS.forEach { step ->
+                val isCompleted = step.number < state.step
+                val isCurrent = step.number == state.step
+                
+                val dotColor = when {
+                    isCompleted -> Color(0xFF34A853) // Green for complete
+                    isCurrent -> Color(0xFF1A73E8)   // Blue for current
+                    else -> Color(0xFFDADCE0)        // Gray for upcoming
+                }
+                
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clip(CircleShape)
+                        .background(dotColor)
+                )
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(onClick = onCancel) {
+                Text(
+                    text = "Cancel", 
+                    color = Color(0xFFD93025), 
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+            
+            TextButton(onClick = onSkip) {
+                Text(
+                    text = "Skip (Demo)", 
+                    color = Color(0xFF1A73E8), 
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
+                    )
+                )
+            }
+        }
     }
 }
 
@@ -705,60 +923,116 @@ private fun StepChecklist(
 // ── CompleteContent ───────────────────────────────────────────
 @Composable
 private fun CompleteContent(
-    onGoTranslate: () -> Unit,
-    onRecalibrate: () -> Unit
+    onGoHome: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    val infiniteTransition = rememberInfiniteTransition(label = "glow")
+    
+    // Animate between standard green and a lighter, more vibrant green
+    val color1 by infiniteTransition.animateColor(
+        initialValue = SignLinkConnected,
+        targetValue  = Color(0xFF00C853), // Standard Green A700
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "color1"
+    )
+    
+    val color2 by infiniteTransition.animateColor(
+        initialValue = Color(0xFFB9F6CA), // Light Green A100
+        targetValue  = Color(0xFFA7FFEB), // Light Teal/Green
+        animationSpec = infiniteRepeatable(
+            animation = tween(4500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "color2"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(color1, color2)
+                )
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        Spacer(Modifier.height(16.dp))
-        // Success animation
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .background(SignLinkConnected.copy(alpha = 0.12f)),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Icon(
-                Icons.Filled.CheckCircle, null,
-                tint = SignLinkConnected,
-                modifier = Modifier.size(60.dp)
-            )
-        }
-        Text(
-            text  = "Calibration Complete!",
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            color = SignLinkConnected,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text      = "Your wristband is now calibrated to your hand.\nYou're ready to start translating sign language.",
-            style     = MaterialTheme.typography.bodyMedium,
-            color     = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(8.dp))
-        Button(
-            onClick  = onGoTranslate,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape    = RoundedCornerShape(14.dp),
-            colors   = ButtonDefaults.buttonColors(containerColor = SignLinkConnected)
-        ) {
-            Icon(Icons.Filled.SignLanguage, null, modifier = Modifier.size(20.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text  = "Start Translating",
-                style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp)
-            )
-        }
-        TextButton(onClick = onRecalibrate) {
-            Text(
-                text  = "Recalibrate",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Glowing effect around the icon
+                Box(contentAlignment = Alignment.Center) {
+                    // Animated pulse rings
+                    val pulseScale by infiniteTransition.animateFloat(
+                        initialValue = 1f,
+                        targetValue  = 1.6f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1500, easing = EaseInOutSine),
+                            repeatMode = RepeatMode.Reverse
+                        ), label = "pulse"
+                    )
+                    
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .scale(pulseScale)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.2f))
+                    )
+                    
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.4f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.CheckCircle, null,
+                            tint = Color(0xFF004D40), // Deep green for contrast
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(21.dp))
+
+                Text(
+                    text  = "Calibration Complete!",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    color = Color(0xFF004D40),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text      = "Your device is now calibrated.\nYou're ready to use SignLink!",
+                    style     = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color     = Color(0xFF004D40).copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Button(
+                onClick  = onGoHome,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape    = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF004D40),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text  = "Go to Dashboard",
+                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                )
+            }
         }
     }
 }
@@ -773,9 +1047,8 @@ private fun FailedCalibrationContent(
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        Spacer(Modifier.height(16.dp))
         Box(
             modifier = Modifier
                 .size(100.dp)
@@ -789,41 +1062,54 @@ private fun FailedCalibrationContent(
                 modifier = Modifier.size(52.dp)
             )
         }
-        Text(
-            text      = "Calibration Failed",
-            style     = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            color     = SignLinkDisconnected,
-            textAlign = TextAlign.Center
-        )
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape    = RoundedCornerShape(12.dp),
-            colors   = CardDefaults.cardColors(
-                containerColor = SignLinkDisconnected.copy(alpha = 0.08f)
-            )
-        ) {
+        
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text      = reason,
-                modifier  = Modifier.padding(16.dp),
-                style     = MaterialTheme.typography.bodyMedium,
-                color     = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Start
+                text      = "Calibration Failed",
+                style     = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                color     = SignLinkDisconnected,
+                textAlign = TextAlign.Center
             )
+            Spacer(Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                shape    = RoundedCornerShape(12.dp),
+                colors   = CardDefaults.cardColors(
+                    containerColor = SignLinkDisconnected.copy(alpha = 0.08f)
+                )
+            ) {
+                Text(
+                    text      = reason,
+                    modifier  = Modifier.padding(16.dp),
+                    style     = MaterialTheme.typography.bodyMedium,
+                    color     = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
-        Button(
-            onClick  = onRetry,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            shape    = RoundedCornerShape(14.dp)
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(Icons.Filled.Refresh, null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text("Try Again", style = MaterialTheme.typography.labelLarge)
-        }
-        TextButton(onClick = onBack) {
-            Text(
-                text  = "Go Back",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Button(
+                onClick  = onRetry,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape    = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8))
+            ) {
+                Icon(Icons.Filled.Refresh, null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Try Again", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+            }
+            TextButton(onClick = onBack) {
+                Text(
+                    text  = "Go Back",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
     }
 }

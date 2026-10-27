@@ -345,32 +345,6 @@ fun RegisterScreen(navController: NavHostController) {
                     }
                 }
 
-                Spacer(Modifier.height(16.dp))
-
-                // ── Sign In link ──────────────────────────────
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment     = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text  = "Already have an account? ",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SignLinkTeal300
-                    )
-                    TextButton(
-                        onClick        = { navController.navigate(Screen.Login.route) },
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text  = "Sign In",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = SignLinkCyan
-                        )
-                    }
-                }
-
                 Spacer(Modifier.height(32.dp))
             }
         }
