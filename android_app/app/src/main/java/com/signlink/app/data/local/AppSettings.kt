@@ -46,7 +46,7 @@ import com.signlink.app.data.repository.RetentionPolicy
  */
 data class AppSettings(
     val theme:            ThemeMode       = ThemeMode.SYSTEM,
-    val textSizeScale:    Float           = 1.0f,
+    val textSizeScale:    Float           = 1.0f, // Small is baseline
     val vibrationEnabled: Boolean         = true,
     val ttsEnabled:       Boolean         = true,
     val ttsRate:          Float           = 1.0f,
