@@ -82,14 +82,13 @@ enum class ThemeMode(val label: String) {
 
 /** Human-readable text-size option for the settings UI */
 enum class TextSizeOption(val label: String, val scale: Float) {
-    SMALL("Small",       0.85f),
-    NORMAL("Normal",     1.0f),
-    LARGE("Large",       1.25f),
-    EXTRA_LARGE("XL",   1.5f);
+    SMALL("Small",       1.0f),
+    MEDIUM("Medium",     1.2f),
+    LARGE("Large",       1.4f);
 
     companion object {
-        fun fromScale(scale: Float) = values().minByOrNull {
+        fun fromScale(scale: Float) = entries.minByOrNull {
             kotlin.math.abs(it.scale - scale)
-        } ?: NORMAL
+        } ?: SMALL
     }
 }

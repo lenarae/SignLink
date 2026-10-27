@@ -123,8 +123,7 @@ fun CalibrationScreen(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(padding)
-                            .padding(horizontal = 24.dp)
-                            .verticalScroll(rememberScrollState()),
+                            .padding(horizontal = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     ) {
@@ -146,8 +145,7 @@ fun CalibrationScreen(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(padding)
-                            .padding(horizontal = 24.dp)
-                            .verticalScroll(rememberScrollState()),
+                            .padding(horizontal = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     ) {
@@ -185,8 +183,7 @@ fun CalibrationScreen(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(padding)
-                            .padding(horizontal = 24.dp)
-                            .verticalScroll(rememberScrollState()),
+                            .padding(horizontal = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     ) {

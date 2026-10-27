@@ -556,7 +556,7 @@ private fun TextSizeSetting(
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
         }
-        val options = TextSizeOption.entries.filter { it != TextSizeOption.SMALL }
+        val options = TextSizeOption.entries
         // Segmented buttons for text size options
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
             options.forEachIndexed { index, option ->
@@ -571,9 +571,7 @@ private fun TextSizeSetting(
                     label = {
                         Text(
                             text  = option.label,
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontSize = (12 * option.scale).sp
-                            )
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 )

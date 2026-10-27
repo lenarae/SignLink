@@ -11,6 +11,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -114,6 +115,7 @@ private val HighContrastColorScheme = darkColorScheme(
 @Composable
 fun SignLinkTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
+    textSizeScale: Float = 1.0f,
     dynamicColor: Boolean = false, // Disabled to keep the branded blue theme as default
     content: @Composable () -> Unit
 ) {
@@ -144,9 +146,75 @@ fun SignLinkTheme(
         }
     }
 
+    // Apply scaling to typography
+    val scaledTypography = remember(textSizeScale) {
+        SignLinkTypography.copy(
+            displayLarge = SignLinkTypography.displayLarge.copy(
+                fontSize = SignLinkTypography.displayLarge.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.displayLarge.lineHeight * textSizeScale
+            ),
+            displayMedium = SignLinkTypography.displayMedium.copy(
+                fontSize = SignLinkTypography.displayMedium.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.displayMedium.lineHeight * textSizeScale
+            ),
+            displaySmall = SignLinkTypography.displaySmall.copy(
+                fontSize = SignLinkTypography.displaySmall.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.displaySmall.lineHeight * textSizeScale
+            ),
+            headlineLarge = SignLinkTypography.headlineLarge.copy(
+                fontSize = SignLinkTypography.headlineLarge.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.headlineLarge.lineHeight * textSizeScale
+            ),
+            headlineMedium = SignLinkTypography.headlineMedium.copy(
+                fontSize = SignLinkTypography.headlineMedium.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.headlineMedium.lineHeight * textSizeScale
+            ),
+            headlineSmall = SignLinkTypography.headlineSmall.copy(
+                fontSize = SignLinkTypography.headlineSmall.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.headlineSmall.lineHeight * textSizeScale
+            ),
+            titleLarge = SignLinkTypography.titleLarge.copy(
+                fontSize = SignLinkTypography.titleLarge.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.titleLarge.lineHeight * textSizeScale
+            ),
+            titleMedium = SignLinkTypography.titleMedium.copy(
+                fontSize = SignLinkTypography.titleMedium.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.titleMedium.lineHeight * textSizeScale
+            ),
+            titleSmall = SignLinkTypography.titleSmall.copy(
+                fontSize = SignLinkTypography.titleSmall.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.titleSmall.lineHeight * textSizeScale
+            ),
+            bodyLarge = SignLinkTypography.bodyLarge.copy(
+                fontSize = SignLinkTypography.bodyLarge.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.bodyLarge.lineHeight * textSizeScale
+            ),
+            bodyMedium = SignLinkTypography.bodyMedium.copy(
+                fontSize = SignLinkTypography.bodyMedium.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.bodyMedium.lineHeight * textSizeScale
+            ),
+            bodySmall = SignLinkTypography.bodySmall.copy(
+                fontSize = SignLinkTypography.bodySmall.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.bodySmall.lineHeight * textSizeScale
+            ),
+            labelLarge = SignLinkTypography.labelLarge.copy(
+                fontSize = SignLinkTypography.labelLarge.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.labelLarge.lineHeight * textSizeScale
+            ),
+            labelMedium = SignLinkTypography.labelMedium.copy(
+                fontSize = SignLinkTypography.labelMedium.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.labelMedium.lineHeight * textSizeScale
+            ),
+            labelSmall = SignLinkTypography.labelSmall.copy(
+                fontSize = SignLinkTypography.labelSmall.fontSize * textSizeScale,
+                lineHeight = SignLinkTypography.labelSmall.lineHeight * textSizeScale
+            )
+        )
+    }
+
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = SignLinkTypography,
+        typography = scaledTypography,
         content = {
             val customColors = when {
                 themeMode == ThemeMode.HIGH_CONTRAST -> SignLinkColors(SuccessHC, ErrorHC)

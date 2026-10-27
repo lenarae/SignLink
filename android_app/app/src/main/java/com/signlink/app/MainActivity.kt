@@ -40,7 +40,8 @@ class MainActivity : ComponentActivity() {
             )
 
             SignLinkTheme(
-                themeMode = settings.theme
+                themeMode     = settings.theme,
+                textSizeScale = settings.textSizeScale
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
