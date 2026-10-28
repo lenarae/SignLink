@@ -1,18 +1,3 @@
-// ============================================================
-// File: data/repository/ChatRepository.kt  [FIXED + COMPLETE]
-// Purpose: Single source of truth for all chat persistence.
-//
-// FIXES applied:
-//   1. storageEnabled is now checked before every insert.
-//      If the user turns off "Save chat history" in Settings,
-//      no messages are written to the DB at all.
-//   2. retentionPolicy is now read from AppSettingsDataStore
-//      and applied automatically on every app start via
-//      applyStartupRetention(), called from SignLinkApp.
-//   3. AppSettingsDataStore is injected (not coupled to Settings
-//      screen) — repository owns the business logic.
-// ============================================================
-
 package com.signlink.app.data.repository
 
 import com.signlink.app.data.local.AppSettingsDataStore
@@ -61,10 +46,7 @@ class ChatRepository @Inject constructor(
 
     // ── WRITE (all respect storageEnabled setting) ────────────
 
-    /**
-     * Save a gesture translation.
-     * NO-OPs silently if storage is disabled in Settings.
-     */
+
     suspend fun saveTranslation(text: String, confidence: Float? = null) {
         if (!isStorageEnabled()) return
         chatDao.insertMessage(
@@ -77,10 +59,7 @@ class ChatRepository @Inject constructor(
         )
     }
 
-    /**
-     * Save a speech-to-text result.
-     * NO-OPs silently if storage is disabled in Settings.
-     */
+
     suspend fun saveSpeechResult(text: String) {
         if (!isStorageEnabled()) return
         chatDao.insertMessage(
@@ -92,11 +71,19 @@ class ChatRepository @Inject constructor(
         )
     }
 
-    /**
-     * Save a system message (device connected, session started, etc).
-     * System messages always save regardless of storageEnabled —
-     * they are operational logs, not user content.
-     */
+
+    suspend fun saveTtsResult(text: String) {
+        if (!isStorageEnabled()) return
+        chatDao.insertMessage(
+            ChatMessage(
+                text      = text,
+                source    = MessageSource.TTS,
+                sessionId = currentSessionId
+            )
+        )
+    }
+
+
     suspend fun saveSystemMessage(text: String) {
         chatDao.insertMessage(
             ChatMessage(
@@ -113,12 +100,7 @@ class ChatRepository @Inject constructor(
     suspend fun deleteSession(sessionId: String)    = chatDao.deleteSession(sessionId)
     suspend fun deleteAllMessages()                 = chatDao.deleteAllMessages()
 
-    /**
-     * Apply data retention policy — deletes messages older than the cutoff.
-     * Called from:
-     *   (a) SignLinkApp.onCreate() on every app start   ← NEW automatic call
-     *   (b) SettingsViewModel when user changes policy  ← existing call
-     */
+
     suspend fun applyRetentionPolicy(policy: RetentionPolicy) {
         val cutoffMs: Long = when (policy) {
             RetentionPolicy.FOREVER   -> return   // nothing to delete
@@ -132,11 +114,7 @@ class ChatRepository @Inject constructor(
         chatDao.deleteMessagesBefore(cutoffMs)
     }
 
-    /**
-     * Called once on app start from SignLinkApp.
-     * Reads the user's saved retention policy and applies it
-     * so old messages are pruned automatically each launch.
-     */
+
     fun applyStartupRetention() {
         scope.launch {
             val settings = settingsDataStore.settings.first()
@@ -145,12 +123,6 @@ class ChatRepository @Inject constructor(
     }
 
     // ── PRIVATE ───────────────────────────────────────────────
-
-    /**
-     * Read the storageEnabled setting from DataStore.
-     * Uses .first() to get the current snapshot synchronously
-     * inside a suspend function.
-     */
     private suspend fun isStorageEnabled(): Boolean =
         settingsDataStore.settings.first().storageEnabled
 }

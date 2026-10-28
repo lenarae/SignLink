@@ -1,20 +1,3 @@
-// ============================================================
-// File: data/translation/TranslationRepository.kt
-// Purpose: Converts raw gesture labels from BluetoothRepository
-// into structured TranslationEvent objects.
-//
-// ARCHITECTURE NOTE:
-//   BluetoothRepository.gestureStream → emit "Hello"
-//   TranslationRepository.translationEvents → emit TranslationEvent("Hello", 0.94f)
-//
-// This separation means:
-//   - Future ML model plugs in HERE (replace mock confidence)
-//   - BluetoothRepository stays focused on BLE
-//   - TranslationViewModel doesn't care how the gesture was classified
-//
-// FUTURE: Replace confidence with real model output probability.
-// ============================================================
-
 package com.signlink.app.data.translation
 
 import com.signlink.app.data.bluetooth.BluetoothRepository
@@ -91,19 +74,17 @@ class TranslationRepository @Inject constructor(
         }
     }
 
-    /** Toggle translation pause/resume */
+
     fun togglePause() {
         _isPaused.value = !_isPaused.value
         _status.value = if (_isPaused.value) TranslationStatus.PAUSED
         else                 TranslationStatus.LISTENING
     }
 
-    /** Clear the current session text */
     fun clearSession() {
         _sessionText.value = ""
     }
 
-    /** Manually set pause state */
     fun setPaused(paused: Boolean) {
         _isPaused.value = paused
         if (!paused) _status.value = TranslationStatus.LISTENING

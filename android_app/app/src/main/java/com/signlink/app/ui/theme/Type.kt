@@ -1,19 +1,3 @@
-// ============================================================
-// File: ui/theme/Type.kt
-// Purpose: Define the typography system for SignLink.
-//
-// Font choices:
-//   - Display/Headlines: "Nunito" — rounded, friendly, accessible
-//   - Body: "Nunito" — consistent, very legible at all sizes
-//
-// We use scalable SP units (not DP) for text so Android's
-// accessibility font-size settings work correctly.
-//
-// NOTE: In a real project you'd add the font files to
-// res/font/ and reference them here. For now we use
-// the system default (which renders as a clean sans-serif).
-// ============================================================
-
 package com.signlink.app.ui.theme
 
 import androidx.compose.material3.Typography
@@ -22,9 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// ── SignLink Typography Scale ─────────────────────────────────
-// Based on Material 3 type scale, adjusted for accessibility.
-// The Settings screen (Phase 8) will allow scaling these up.
+
 val SignLinkTypography = Typography(
 
     // ── Display ── (largest text, used for splash/hero)
@@ -96,11 +78,11 @@ val SignLinkTypography = Typography(
         letterSpacing = 0.1.sp
     ),
 
-    // ── Body ── (main readable content - most important for accessibility)
+    // ── Body ── (main readable content)
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,       // ← Minimum readable size
+        fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),

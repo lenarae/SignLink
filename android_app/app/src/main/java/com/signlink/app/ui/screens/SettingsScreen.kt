@@ -1,28 +1,3 @@
-// ============================================================
-// File: ui/screens/SettingsScreen.kt
-// Purpose: Complete app settings screen with live DataStore binding.
-//
-// SECTIONS:
-//   1. Appearance    — Dark mode, High contrast, Text size
-//   2. Speech        — TTS on/off, Speed slider, Pitch slider
-//   3. Accessibility — Vibration toggle
-//   4. Device        — Auto-connect, Show confidence %
-//   5. Data & Storage — Storage on/off, Retention policy, Clear all
-//   6. About         — App version, open source info
-//   7. Reset         — Reset all settings to defaults
-//
-// UI PATTERN:
-//   Each section is a Card containing SettingsItem rows.
-//   Toggles use Switch, sliders use Slider, choices use
-//   segmented buttons. Every change is persisted instantly.
-//
-// Nielsen heuristics:
-//   #1: Current value always shown (switch state, slider value)
-//   #3: Reset button + confirm dialog = undo support
-//   #5: Destructive actions (clear data) require confirmation
-//   #6: Consistent item layout throughout
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.foundation.background
@@ -67,7 +42,7 @@ fun SettingsScreen(navController: NavHostController) {
     val feedbackMessage by viewModel.feedbackMessage.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Show snackbar for feedback messages
+
     LaunchedEffect(feedbackMessage) {
         feedbackMessage?.let {
             snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
@@ -276,8 +251,6 @@ fun SettingsScreen(navController: NavHostController) {
 
                 SettingsInfoItem(label = "App version",    value = "1.0.0")
                 SettingsDivider()
-                SettingsInfoItem(label = "Build",          value = "Phase 9 — Complete")
-                SettingsDivider()
                 SettingsInfoItem(label = "Architecture",   value = "MVVM · Jetpack Compose")
                 SettingsDivider()
                 SettingsInfoItem(label = "Database",       value = "RoomDB v1")
@@ -308,14 +281,7 @@ fun SettingsScreen(navController: NavHostController) {
 }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// REUSABLE SETTINGS COMPONENTS
-// ═══════════════════════════════════════════════════════════════
 
-// ── SettingsSection ───────────────────────────────────────────
-/**
- * A titled card grouping related settings items.
- */
 @Composable
 private fun SettingsSection(
     title:   String,
@@ -738,7 +704,7 @@ private fun SettingsDivider() {
     )
 }
 
-// ── Helper formatters ─────────────────────────────────────────
+
 private fun formatRate(rate: Float) = when {
     rate <= 0.5f -> "0.5× slow"
     rate <= 0.75f -> "0.75×"

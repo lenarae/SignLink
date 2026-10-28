@@ -1,8 +1,3 @@
-// ============================================================
-// File: viewmodel/TranslationViewModel.kt  [UPDATED — Phase 7]
-// Now auto-saves every translated gesture to ChatRepository.
-// ============================================================
-
 package com.signlink.app.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -22,7 +17,7 @@ import javax.inject.Inject
 class TranslationViewModel @Inject constructor(
     private val translationRepository: TranslationRepository,
     private val ttsManager:            TextToSpeechManager,
-    private val chatRepository:        ChatRepository        // ← NEW Phase 7
+    private val chatRepository:        ChatRepository
 ) : ViewModel() {
 
     val translationStatus: StateFlow<TranslationStatus> = translationRepository.status
@@ -47,7 +42,7 @@ class TranslationViewModel @Inject constructor(
 
                 if (_ttsEnabled.value) ttsManager.speak(event.text)
 
-                // Auto-save to Room DB (Phase 7)
+                // Auto-save to Room DB
                 chatRepository.saveTranslation(
                     text       = event.text,
                     confidence = event.confidence

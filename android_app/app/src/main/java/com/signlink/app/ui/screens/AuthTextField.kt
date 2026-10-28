@@ -1,20 +1,3 @@
-// ============================================================
-// File: ui/screens/AuthTextField.kt
-// Purpose: A reusable text field component for auth screens.
-//
-// Styled to match the dark teal background of Welcome/Login/Register.
-// Handles:
-//   - Leading icon
-//   - Optional trailing icon (e.g. password visibility toggle)
-//   - Error state (red border + error message below)
-//   - Custom visual transformation (for password masking)
-//
-// WHY a separate composable?
-//   LoginScreen and RegisterScreen both need styled text fields.
-//   Instead of duplicating 30+ lines of OutlinedTextField styling,
-//   we extract it here once. This is the DRY (Don't Repeat Yourself) principle.
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.foundation.layout.*

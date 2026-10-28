@@ -1,8 +1,3 @@
-// ============================================================
-// File: viewmodel/SpeechViewModel.kt  [UPDATED — Phase 7]
-// Now auto-saves speech results to ChatRepository.
-// ============================================================
-
 package com.signlink.app.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -25,7 +20,7 @@ data class TranscriptEntry(
 class SpeechViewModel @Inject constructor(
     private val speechManager:  SpeechRecognizerManager,
     private val ttsManager:     TextToSpeechManager,
-    private val chatRepository: ChatRepository           // ← NEW Phase 7
+    private val chatRepository: ChatRepository
 ) : ViewModel() {
 
     val speechState: StateFlow<SpeechState> = speechManager.speechState
@@ -58,7 +53,7 @@ class SpeechViewModel @Inject constructor(
                     _history.value = listOf(TranscriptEntry(state.text)) + _history.value
                     if (_autoSpeak.value) ttsManager.speak(state.text, true)
 
-                    // Auto-save to Room DB (Phase 7)
+                    // Auto-save to Room DB
                     chatRepository.saveSpeechResult(state.text)
                 }
             }

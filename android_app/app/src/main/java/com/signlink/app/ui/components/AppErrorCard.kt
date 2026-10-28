@@ -1,17 +1,3 @@
-// ============================================================
-// File: ui/components/AppErrorCard.kt
-// Purpose: A reusable error card composable used across all
-// screens to display errors consistently.
-//
-// USAGE:
-//   AppErrorCard(
-//       error    = ErrorHandler.bluetoothOff(),
-//       onAction = { /* enable bluetooth */ }
-//   )
-//
-// Also includes a top-level NetworkBanner for transient errors.
-// ============================================================
-
 package com.signlink.app.ui.components
 
 import androidx.compose.animation.*

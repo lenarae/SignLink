@@ -1,23 +1,6 @@
-// ============================================================
-// File: data/bluetooth/CalibrationState.kt
-// Purpose: Defines every possible state the calibration wizard can be in.
-//
-// The calibration process has 4 steps:
-//   Step 1 → Wrist Position Check
-//   Step 2 → Signal Quality Test
-//   Step 3 → Gesture Baseline Recording
-//   Step 4 → Confirmation
-//
-// Each step has sub-states: Idle, InProgress, Success, Failed.
-// This sealed class captures all of them cleanly.
-// ============================================================
-
 package com.signlink.app.data.bluetooth
 
-/**
- * Represents the overall calibration session status.
- * Used by CalibrationViewModel and CalibrationScreen.
- */
+
 sealed class CalibrationSessionState {
 
     /** User hasn't started calibration yet */
@@ -33,18 +16,12 @@ sealed class CalibrationSessionState {
         val stepState: CalibrationStepState
     ) : CalibrationSessionState()
 
-    /** All 4 steps completed successfully */
-    data object Complete : CalibrationSessionState()
 
-    /** Calibration failed and needs to be restarted */
+    data object Complete : CalibrationSessionState()
     data class Failed(val reason: String) : CalibrationSessionState()
 }
 
-/**
- * State of an individual calibration step.
- */
 sealed class CalibrationStepState {
-    /** Step is queued but not started yet */
     data object Waiting : CalibrationStepState()
 
     /**
@@ -57,26 +34,22 @@ sealed class CalibrationStepState {
         val message:  String
     ) : CalibrationStepState()
 
-    /** Step completed successfully */
+
     data object Done : CalibrationStepState()
 
-    /** Step failed */
     data class Error(val message: String) : CalibrationStepState()
 }
 
-/**
- * Data class describing one calibration step's metadata.
- * Used to render step cards in the UI.
- */
+
 data class CalibrationStep(
     val number:      Int,
     val title:       String,
     val description: String,
-    val icon:        String,           // emoji icon for the step
-    val durationMs:  Long              // how long this step takes (simulated)
+    val icon:        String,
+    val durationMs:  Long
 )
 
-/** All 5 calibration steps defined in one place */
+
 val CALIBRATION_STEPS = listOf(
     CalibrationStep(
         number      = 1,

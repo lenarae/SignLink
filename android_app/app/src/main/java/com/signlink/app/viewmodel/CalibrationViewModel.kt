@@ -1,15 +1,3 @@
-// ============================================================
-// File: viewmodel/CalibrationViewModel.kt
-// Purpose: ViewModel that drives the calibration wizard UI.
-//
-// Exposes:
-//   - sessionState: full calibration session state machine
-//   - signalStrength: 0–1 float for the signal bar animation
-//   - channelQualities: 8 electrode quality readings
-//   - currentStep: computed convenience property
-//   - overallProgress: 0–1 across ALL steps for the top bar
-// ============================================================
-
 package com.signlink.app.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -36,7 +24,6 @@ class CalibrationViewModel @Inject constructor(
     val channelQualities: StateFlow<List<Float>> =
         calibrationRepository.channelQualities
 
-    // ── Computed: current step number (1–4, or 0 if not started) ─
     val currentStepNumber: StateFlow<Int> = sessionState
         .map { state ->
             when (state) {
@@ -47,11 +34,7 @@ class CalibrationViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
-    /**
-     * Overall progress 0.0–1.0 across all steps.
-     * Used by the top progress bar.
-     * e.g. completing step 2 of 4 = 0.5
-     */
+
     val overallProgress: StateFlow<Float> = sessionState
         .map { state ->
             when (state) {
@@ -71,10 +54,8 @@ class CalibrationViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0f)
 
-    // ══════════════════════════════════════════════════════════
-    // USER ACTIONS
-    // ══════════════════════════════════════════════════════════
 
+    // USER ACTIONS
     fun startCalibration()   = calibrationRepository.startCalibration()
     fun resetCalibration()   = calibrationRepository.reset()
     fun retryCalibration()   = calibrationRepository.retry()

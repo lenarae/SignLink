@@ -1,21 +1,3 @@
-// ============================================================
-// File: utils/TextToSpeechManager.kt
-// Purpose: Wraps Android's TextToSpeech API into a clean,
-// injectable singleton with a simple speak() interface.
-//
-// WHY a wrapper?
-//   - Android TTS requires Context + listener callbacks
-//   - Raw TTS calls scattered in ViewModel are messy
-//   - This wrapper handles: initialization, queue management,
-//     pitch/rate settings, and cleanup
-//
-// USAGE:
-//   ttsManager.speak("Hello")     // queues the text
-//   ttsManager.stop()             // interrupt current speech
-//   ttsManager.setRate(1.2f)      // 1.0 = normal speed
-//   ttsManager.setPitch(1.0f)     // 1.0 = normal pitch
-// ============================================================
-
 package com.signlink.app.utils
 
 import android.content.Context
@@ -30,9 +12,6 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Possible states of the TTS engine.
- */
 enum class TtsState {
     INITIALIZING,  // Engine is loading (can take 1-2 seconds)
     READY,         // Ready to speak
@@ -40,10 +19,7 @@ enum class TtsState {
     ERROR          // Initialization failed
 }
 
-/**
- * A singleton wrapper around Android's TextToSpeech engine.
- * Inject this into any ViewModel that needs speech output.
- */
+
 @Singleton
 class TextToSpeechManager @Inject constructor(
     @ApplicationContext private val context: Context

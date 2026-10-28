@@ -1,22 +1,3 @@
-// ============================================================
-// File: data/bluetooth/CalibrationRepository.kt
-// Purpose: Drives the calibration wizard's step-by-step logic.
-//
-// MOCK IMPLEMENTATION:
-//   Each step runs a coroutine that:
-//     1. Transitions to Running state
-//     2. Animates progress from 0→1 over durationMs
-//     3. Emits signal strength readings (mocked)
-//     4. Transitions to Done (or Error if simulated failure)
-//
-// REAL IMPLEMENTATION (Future):
-//   Replace each step's delay loop with actual BLE reads:
-//     - Step 1: Read electrode contact resistance
-//     - Step 2: Read EMG noise floor / SNR
-//     - Step 3: Record N baseline gesture samples
-//     - Step 4: Compute and store calibration matrix
-// ============================================================
-
 package com.signlink.app.data.bluetooth
 
 import kotlinx.coroutines.*
@@ -48,9 +29,6 @@ class CalibrationRepository @Inject constructor() {
 
     private var calibrationJob: Job? = null
 
-    // ══════════════════════════════════════════════════════════
-    // PUBLIC API
-    // ══════════════════════════════════════════════════════════
 
     /** Begin the full calibration sequence from Step 1. */
     fun startCalibration() {
@@ -143,7 +121,11 @@ class CalibrationRepository @Inject constructor() {
         return true
     }
 
-    /** Status messages to cycle through during each step */
+
+
+
+
+
     private fun stepMessages(stepNumber: Int): List<String> = when (stepNumber) {
         1 -> listOf(
             "Detecting wrist contact...",

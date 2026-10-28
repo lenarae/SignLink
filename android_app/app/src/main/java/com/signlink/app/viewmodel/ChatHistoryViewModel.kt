@@ -1,7 +1,3 @@
-// ============================================================
-// File: viewmodel/ChatHistoryViewModel.kt
-// ============================================================
-
 package com.signlink.app.viewmodel
 
 import androidx.lifecycle.ViewModel

@@ -1,15 +1,3 @@
-// ============================================================
-// File: ui/screens/PlaceholderScreen.kt
-// Purpose: A temporary screen shown for features not yet built.
-//
-// This is a KEY practice in phased development:
-//   - The app can be compiled and run at ANY phase
-//   - Navigation works end-to-end from Day 1
-//   - No "TODO" crashes — just friendly placeholders
-//
-// Each phase replaces one placeholder with a real screen.
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -43,9 +31,9 @@ fun PlaceholderScreen(
     // Center everything on screen
     Box(
         modifier = Modifier
-            .fillMaxSize()                          // Take full screen
-            .padding(32.dp),                        // Comfortable padding
-        contentAlignment = Alignment.Center         // Center content
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -55,7 +43,7 @@ fun PlaceholderScreen(
             // ── Large Icon ────────────────────────────────────
             Text(
                 text = icon,
-                fontSize = 72.sp                    // Big, friendly icon
+                fontSize = 72.sp
             )
 
             // ── Screen Name ───────────────────────────────────
@@ -77,7 +65,6 @@ fun PlaceholderScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             // ── WIP Badge ─────────────────────────────────────
-            // Surface card with a "🚧 Coming Soon" message
             Surface(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = MaterialTheme.shapes.medium

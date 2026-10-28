@@ -1,22 +1,3 @@
-// ============================================================
-// File: utils/SpeechRecognizerManager.kt
-// Purpose: Wraps Android's SpeechRecognizer into a clean,
-// coroutine/Flow-based API that the ViewModel can observe.
-//
-// ── CRITICAL BUG FIXED ────────────────────────────────────────
-// BEFORE: Was @Singleton — SpeechRecognizer held for entire app
-//         lifetime → "recognizer busy" errors on re-entry.
-// AFTER:  NOT @Singleton. One instance per ViewModel scope.
-//         destroy() frees it when ViewModel.onCleared() fires.
-//
-// THREADING: SpeechRecognizer MUST run on Main thread.
-//            This class handles that internally.
-//
-// REAL vs MOCK:
-//   Real device with Google STT → SpeechRecognizer used fully.
-//   Emulator / no STT service   → mock word-by-word simulation.
-// ============================================================
-
 package com.signlink.app.utils
 
 import android.content.Context
@@ -32,12 +13,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 // ── Speech State sealed class ─────────────────────────────────
-/**
- * Every possible state the speech recogniser can be in.
- * The UI renders different visuals for each state.
- */
+
 sealed class SpeechState {
-    /** Mic is off. Nothing happening. */
+    /** Mic is off.  */
     data object Idle : SpeechState()
 
     /** Mic is active, waiting for speech input. */
@@ -55,7 +33,7 @@ sealed class SpeechState {
      */
     data class Result(val text: String) : SpeechState()
 
-    /** Listened but heard nothing. Not an error — just silence. */
+    /** Listened but heard nothing. Not an error. */
     data object NoSpeech : SpeechState()
 
     /**
@@ -108,15 +86,9 @@ class SpeechRecognizerManager @Inject constructor(
     )
     private var mockIndex = 0
 
-    // ═══════════════════════════════════════════════════════════
-    // PUBLIC API
-    // ═══════════════════════════════════════════════════════════
 
-    /**
-     * Begin listening for speech.
-     * Call AFTER confirming RECORD_AUDIO permission is granted.
-     * No-op if already listening.
-     */
+    // PUBLIC API
+
     fun startListening() {
         val current = _speechState.value
         if (current is SpeechState.Listening || current is SpeechState.Partial) return
@@ -125,20 +97,14 @@ class SpeechRecognizerManager @Inject constructor(
         else                        startMockRecognition()
     }
 
-    /**
-     * Stop listening and reset to Idle.
-     * Safe to call even if not listening.
-     */
+
     fun stopListening() {
         recognizer?.stopListening()
         mockJob?.cancel()
         _speechState.value = SpeechState.Idle
     }
 
-    /**
-     * Release ALL resources. MUST call from ViewModel.onCleared().
-     * After this, do not call startListening() again.
-     */
+
     fun destroy() {
         mockJob?.cancel()
         mainScope.cancel()
@@ -147,10 +113,8 @@ class SpeechRecognizerManager @Inject constructor(
         _speechState.value = SpeechState.Idle
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // REAL RECOGNITION
-    // ═══════════════════════════════════════════════════════════
 
+    // REAL RECOGNITION
     private fun startRealRecognition() {
         mainScope.launch {
             recognizer?.destroy()
@@ -175,47 +139,39 @@ class SpeechRecognizerManager @Inject constructor(
         }
     }
 
-    /**
-     * Build RecognitionListener mapping Android callbacks → SpeechState.
-     * All 8 methods are implemented even if they're no-ops, as Android requires.
-     */
+
     private fun buildListener() = object : RecognitionListener {
 
         override fun onReadyForSpeech(params: Bundle?) {
-            // Engine ready — mic is now active
             _speechState.value = SpeechState.Listening
         }
 
         override fun onBeginningOfSpeech() {
-            // User started talking — stay in Listening, Partial will follow
+
         }
 
         override fun onRmsChanged(rmsdB: Float) {
-            // Amplitude change — could drive a waveform visualiser
-            // rmsdB ≈ -2 to 10 dBm. Not used for now.
+
         }
 
         override fun onBufferReceived(buffer: ByteArray?) {
-            // Raw audio bytes — not needed for text recognition
+
         }
 
         override fun onEndOfSpeech() {
-            // User stopped talking — engine is processing
-            // onResults() or onError() comes next
+
         }
 
         override fun onPartialResults(partialResults: Bundle?) {
-            // Real-time partial text — called repeatedly while user speaks
             val partial = partialResults
                 ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                ?.firstOrNull()         // index 0 = highest confidence
+                ?.firstOrNull()
                 ?: return
 
             if (partial.isNotBlank()) _speechState.value = SpeechState.Partial(partial)
         }
 
         override fun onResults(results: Bundle?) {
-            // Final result — user has stopped speaking
             val text = results
                 ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 ?.firstOrNull()
@@ -228,7 +184,6 @@ class SpeechRecognizerManager @Inject constructor(
         }
 
         override fun onError(error: Int) {
-            // Map integer error codes to friendly English messages
             val message = when (error) {
                 SpeechRecognizer.ERROR_NO_MATCH ->
                     "Could not understand. Please try again."
@@ -252,7 +207,7 @@ class SpeechRecognizerManager @Inject constructor(
                     "Recognition failed (code $error). Please try again."
             }
 
-            // NO_MATCH / SPEECH_TIMEOUT are "nothing said", not real errors
+
             _speechState.value = when (error) {
                 SpeechRecognizer.ERROR_NO_MATCH,
                 SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> SpeechState.NoSpeech
@@ -261,39 +216,32 @@ class SpeechRecognizerManager @Inject constructor(
         }
 
         override fun onEvent(eventType: Int, params: Bundle?) {
-            // Reserved by Android for future use — not triggered in practice
+
         }
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // MOCK RECOGNITION
-    // ═══════════════════════════════════════════════════════════
 
-    /**
-     * Simulates realistic word-by-word partial results + final Result.
-     * Used when Google STT is not available (emulator, CI, etc).
-     */
     private fun startMockRecognition() {
         _speechState.value = SpeechState.Listening
         mockJob?.cancel()
 
         mockJob = mainScope.launch {
-            delay(1_200)  // Simulate user thinking before speaking
+            delay(1_200)
 
             val phrase = mockPhrases[mockIndex % mockPhrases.size]
             mockIndex++
 
-            // Emit each word progressively — simulates partial results
+            // Emit each word progressively to simulate partial results
             val words = phrase.split(" ")
             val sb = StringBuilder()
             for (word in words) {
                 if (!isActive) return@launch
                 sb.append(if (sb.isEmpty()) word else " $word")
                 _speechState.value = SpeechState.Partial(sb.toString())
-                delay(180)  // ~180ms per word — realistic speech pace
+                delay(180)
             }
 
-            delay(350)  // Brief pause before final lock-in
+            delay(350)
             _speechState.value = SpeechState.Result(phrase)
         }
     }

@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    File: AndroidManifest.xml
-    Purpose: The "ID card" of your app.
-    Declares: app name, icon, permissions, and the entry Activity.
-
-    We declare ALL permissions upfront (even for future phases)
-    so you don't get crashes later when Bluetooth/mic features are added.
--->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- ═══════════════════════════════════════════════════════
-         BLUETOOTH PERMISSIONS
-         Required for Phase 3: Scanning & connecting to wristband
-         Android 12+ (API 31+) requires these new permissions
-         ═══════════════════════════════════════════════════════ -->
 
     <!-- Scan for nearby BLE devices -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
@@ -34,22 +20,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
         android:maxSdkVersion="30" />
 
-    <!-- ═══════════════════════════════════════════════════════
-         MICROPHONE PERMISSION
-         Required for Phase 6: Speech-to-Text recording
-         ═══════════════════════════════════════════════════════ -->
+    <!-- Google Play services -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- ═══════════════════════════════════════════════════════
-         VIBRATION PERMISSION
-         Required for Settings: Vibration feedback toggle
-         ═══════════════════════════════════════════════════════ -->
     <uses-permission android:name="android.permission.VIBRATE" />
-
-    <!-- ═══════════════════════════════════════════════════════
-         INTERNET
-         May be needed for future AI/cloud features
-         ═══════════════════════════════════════════════════════ -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Declare BLE as a hardware feature (not required to run) -->
@@ -66,17 +39,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SignLink">
 
-        <!--
-            MainActivity is the ONLY activity.
-            Jetpack Compose handles all "screens" inside this single activity.
-            This is the modern "Single Activity Architecture" pattern.
-        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
 
-            <!-- This intent-filter makes MainActivity the launch screen -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

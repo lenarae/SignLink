@@ -1,37 +1,3 @@
-// ============================================================
-// File: ui/screens/TranslationScreen.kt
-// Purpose: The core feature screen — live sign → text translation.
-//
-// UI LAYOUT:
-//   ┌──────────────────────────────────┐
-//   │ ← Back    Live Translation  ⚙️  │  ← top bar
-//   │ [● LISTENING]  TTS [ON]  [PAUSE]│  ← status strip
-//   ├──────────────────────────────────┤
-//   │                                  │
-//   │     H E L L O                    │  ← BIG latest word
-//   │     ──────────                   │
-//   │     High confidence  0.94        │
-//   │                                  │
-//   ├──────────────────────────────────┤
-//   │  Full sentence:                  │
-//   │  "Hello yes thank you..."        │  ← scrollable session text
-//   ├──────────────────────────────────┤
-//   │  Recent (tap any word to replay) │
-//   │  [Hello] [Yes] [No] [Thank you]  │  ← event chips
-//   ├──────────────────────────────────┤
-//   │  [🔊 Read All]  [🗑 Clear]       │  ← action buttons
-//   └──────────────────────────────────┘
-//
-// Design: Dark/focused interface. Minimal chrome.
-// The translated word is THE focus — everything else supports it.
-//
-// Nielsen heuristics:
-//   #1: Animated status indicator always visible
-//   #3: Pause button gives full user control
-//   #5: TTS on/off toggle prevents unwanted speech
-//   #7: Flexibility — can read entire session or single words
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.*

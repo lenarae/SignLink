@@ -1,17 +1,3 @@
-// ============================================================
-// File: ui/screens/RegisterScreen.kt
-// Purpose: New user registration form (UI only, no backend).
-//
-// Fields:
-//   - Full name
-//   - Email address
-//   - Password (with strength indicator)
-//   - Confirm password
-//   - Terms & Privacy agreement checkbox
-//
-// On "Create Account": simulates a 1.5s call → navigates to Home.
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.animateColorAsState
@@ -380,10 +366,6 @@ fun RegisterScreen(navController: NavHostController) {
 }
 
 // ── Password Strength Bar ──────────────────────────────────────
-/**
- * A 4-segment bar that fills and changes color based on strength.
- * strength: 1=Weak(red), 2=Fair(orange), 3=Good(yellow), 4=Strong(green)
- */
 @Composable
 private fun PasswordStrengthBar(strength: Int) {
     val strengthLabel = when (strength) {
@@ -406,7 +388,8 @@ private fun PasswordStrengthBar(strength: Int) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // Draw 4 segments; filled segments use strengthColor, empty use dim
+
+
             repeat(4) { index ->
                 val filled       = index < strength
                 val segmentColor by animateColorAsState(

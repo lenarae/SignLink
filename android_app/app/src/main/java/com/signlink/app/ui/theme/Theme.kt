@@ -41,15 +41,15 @@ object SignLinkTheme {
 
 // ── Light Color Scheme ────────────────────────────────────────
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF008399), // SignLinkTeal400
+    primary = Color(0xFF008399),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFADEAFF), // SignLinkTeal100
-    onPrimaryContainer = Color(0xFF001F26), // Primary10
+    primaryContainer = Color(0xFFADEAFF),
+    onPrimaryContainer = Color(0xFF001F26),
     
-    secondary = Color(0xFF006173), // SignLinkTeal500
+    secondary = Color(0xFF006173),
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFADEAFF), // SignLinkTeal100
-    onSecondaryContainer = Color(0xFF00363F), // Primary20
+    secondaryContainer = Color(0xFFADEAFF),
+    onSecondaryContainer = Color(0xFF00363F),
     
     tertiary = Color(0xFF6D5677),
     onTertiary = Color.White,
@@ -59,7 +59,7 @@ private val LightColorScheme = lightColorScheme(
     error = Error,
     onError = Color.White,
     
-    background = Color(0xFFD6F6FF), // Light Sky Blue
+    background = Color(0xFFD6F6FF),
     onBackground = Color(0xFF001F26),
     surface = Color.White,
     onSurface = Color(0xFF001F26),
@@ -70,12 +70,12 @@ private val LightColorScheme = lightColorScheme(
 
 // ── Dark Color Scheme ─────────────────────────────────────────
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF00E5FF), // SignLinkCyan - Brighter for Dark Mode
+    primary = Color(0xFF00E5FF),
     onPrimary = Color(0xFF001F26),
-    primaryContainer = Color(0xFF004F5C), // Primary30
+    primaryContainer = Color(0xFF004F5C),
     onPrimaryContainer = Color(0xFFADEAFF),
     
-    secondary = Color(0xFF55D6F3), // Primary80
+    secondary = Color(0xFF55D6F3),
     onSecondary = Color(0xFF00363F),
     secondaryContainer = Color(0xFF00363F),
     onSecondaryContainer = Color(0xFFADEAFF),
@@ -85,12 +85,12 @@ private val DarkColorScheme = darkColorScheme(
     tertiaryContainer = Color(0xFF6D5677),
     onTertiaryContainer = Color(0xFFF6D9FF),
     
-    error = Color(0xFFE57373), // Better blending red for Dark Mode
+    error = Color(0xFFE57373),
     onError = Color(0xFF310001),
     
-    background = Color(0xFF001D26), // SignLinkTeal900
+    background = Color(0xFF001D26),
     onBackground = Color(0xFFADEAFF),
-    surface = Color(0xFF001F26), // Primary10
+    surface = Color(0xFF001F26),
     onSurface = Color(0xFFADEAFF),
     surfaceVariant = Color(0xFF00363F),
     onSurfaceVariant = Color(0xFFADEAFF),
@@ -116,7 +116,7 @@ private val HighContrastColorScheme = darkColorScheme(
 fun SignLinkTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     textSizeScale: Float = 1.0f,
-    dynamicColor: Boolean = false, // Disabled to keep the branded blue theme as default
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val darkTheme = when (themeMode) {

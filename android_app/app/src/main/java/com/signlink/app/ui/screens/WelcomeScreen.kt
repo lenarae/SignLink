@@ -1,15 +1,3 @@
-// ============================================================
-// File: ui/screens/WelcomeScreen.kt
-// Purpose: The first screen new users see.
-//
-// Design goals:
-//   - Animated logo entrance (scale + fade)
-//   - Staggered text reveal (headline, then subtitle)
-//   - Two CTAs: Get Started (→ Register) and Sign In (→ Login)
-//   - Floating sign-language "hand" shapes as background art
-//   - Works beautifully in both light and dark mode
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.*
@@ -123,20 +111,6 @@ fun WelcomeScreen(navController: NavHostController) {
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.08f))
         )
-
-        // ── Settings Button ──────────────────────────────────
-        IconButton(
-            onClick = { navController.navigate(Screen.Settings.route) },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 40.dp, end = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = stringResource(R.string.settings),
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            )
-        }
 
         // ── Main content column ────────────────────────────────
         val scrollState = rememberScrollState()
@@ -299,6 +273,20 @@ fun WelcomeScreen(navController: NavHostController) {
                     )
                 }
             }
+        }
+
+        // ── Settings Button ──
+        IconButton(
+            onClick = { navController.navigate(Screen.Settings.route) },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 40.dp, end = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(R.string.settings),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
         }
     }
 }

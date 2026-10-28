@@ -1,32 +1,9 @@
-// ============================================================
-// File: data/bluetooth/ConnectionState.kt
-// Purpose: Represent all possible BLE connection states.
-//
-// Using a sealed class means:
-//   - The compiler knows EVERY possible state
-//   - when() expressions are exhaustive (no "else" needed)
-//   - States can carry data (e.g. error message in Failed)
-//
-// This pattern is used throughout the app for UI state machines.
-// ============================================================
-
 package com.signlink.app.data.bluetooth
 
-/**
- * Sealed class representing every possible state of the
- * BLE connection between the app and the wristband.
- *
- * Used by:
- *   - BluetoothRepository (produces state changes)
- *   - BluetoothViewModel (holds as StateFlow)
- *   - BluetoothScreen (observes and renders UI accordingly)
- */
+
 sealed class ConnectionState {
 
-    /**
-     * No connection. App has never connected or was disconnected.
-     * This is the default/initial state.
-     */
+
     data object Disconnected : ConnectionState()
 
     /**

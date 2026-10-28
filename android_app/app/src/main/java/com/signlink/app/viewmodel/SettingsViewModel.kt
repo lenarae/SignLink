@@ -1,20 +1,3 @@
-// ============================================================
-// File: viewmodel/SettingsViewModel.kt
-// Purpose: ViewModel that manages reading and writing all
-// user preferences via AppSettingsDataStore.
-//
-// KEY PATTERN:
-//   Settings are loaded as a single AppSettings snapshot from
-//   DataStore. Each user action calls one update suspend fun.
-//   The UI observes the settings StateFlow and rebuilds when
-//   any value changes — no manual refresh needed.
-//
-// ALSO HANDLES:
-//   - Applying retention policy to existing chat history
-//   - Triggering vibration feedback
-//   - Clearing all chat data
-// ============================================================
-
 package com.signlink.app.viewmodel
 
 import android.content.Context
@@ -65,10 +48,8 @@ class SettingsViewModel @Inject constructor(
     private val _feedbackMessage = MutableStateFlow<String?>(null)
     val feedbackMessage: StateFlow<String?> = _feedbackMessage.asStateFlow()
 
-    // ═══════════════════════════════════════════════════════════
-    // APPEARANCE
-    // ═══════════════════════════════════════════════════════════
 
+    // APPEARANCE
     fun setTheme(mode: ThemeMode) {
         update { setTheme(mode) }
     }
@@ -83,19 +64,15 @@ class SettingsViewModel @Inject constructor(
 
     fun setTextSize(option: TextSizeOption) = update { setTextSizeScale(option.scale) }
 
-    // ═══════════════════════════════════════════════════════════
-    // ACCESSIBILITY
-    // ═══════════════════════════════════════════════════════════
 
+    // ACCESSIBILITY
     fun setVibration(enabled: Boolean) {
         update { setVibrationEnabled(enabled) }
         if (enabled) triggerTestVibration()
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // TEXT-TO-SPEECH
-    // ═══════════════════════════════════════════════════════════
 
+    // TEXT-TO-SPEECH
     fun setTtsEnabled(enabled: Boolean) = update { setTtsEnabled(enabled) }
 
     fun setTtsRate(rate: Float) {
@@ -110,10 +87,8 @@ class SettingsViewModel @Inject constructor(
         ttsManager.speak("Hello", flushQueue = true)
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // DATA & STORAGE
-    // ═══════════════════════════════════════════════════════════
 
+    // DATA & STORAGE
     fun setStorageEnabled(enabled: Boolean) = update { setStorageEnabled(enabled) }
 
     fun setRetentionPolicy(policy: RetentionPolicy) {
@@ -136,18 +111,13 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    // ═══════════════════════════════════════════════════════════
     // DEVICE
-    // ═══════════════════════════════════════════════════════════
-
     fun setAutoConnect(enabled: Boolean) = update { setAutoConnect(enabled) }
 
     fun setShowConfidence(show: Boolean) = update { setShowConfidence(show) }
 
-    // ═══════════════════════════════════════════════════════════
-    // RESET
-    // ═══════════════════════════════════════════════════════════
 
+    // RESET
     fun showResetDialog()  { _showResetDialog.value = true }
     fun hideResetDialog()  { _showResetDialog.value = false }
 
@@ -163,10 +133,8 @@ class SettingsViewModel @Inject constructor(
 
     fun clearFeedback() { _feedbackMessage.value = null }
 
-    // ═══════════════════════════════════════════════════════════
-    // PRIVATE HELPERS
-    // ═══════════════════════════════════════════════════════════
 
+    // PRIVATE HELPERS
     /** Launches a coroutine to call a DataStore write function */
     private fun update(block: suspend AppSettingsDataStore.() -> Unit) {
         viewModelScope.launch { settingsDataStore.block() }

@@ -1,35 +1,3 @@
-// ============================================================
-// File: ui/screens/SpeechScreen.kt
-// Purpose: Speech-to-Text input screen.
-//
-// LAYOUT:
-//   ┌──────────────────────────────────┐
-//   │ ← Back   Speech Input    🔊 Auto │  ← topBar
-//   ├──────────────────────────────────┤
-//   │                                  │
-//   │      ┌─────────────────┐         │
-//   │      │  🎙️  (pulsing) │         │  ← big mic button
-//   │      │  TAP TO SPEAK   │         │
-//   │      └─────────────────┘         │
-//   │                                  │
-//   │  "Hello how are you..."          │  ← live partial text
-//   │  [ERROR / NO SPEECH message]     │
-//   │                                  │
-//   ├──────────────────────────────────┤
-//   │  Transcript  [Speak All] [Clear] │
-//   │  ┌──────────────────────────────┐│
-//   │  │ "Hello how are you today?"  ││  ← history cards
-//   │  │ 🔊  🗑                       ││
-//   │  └──────────────────────────────┘│
-//   └──────────────────────────────────┘
-//
-// Nielsen heuristics:
-//   #1: Animated mic ring + status label = always know current state
-//   #3: Stop button during recording; clear history button
-//   #5: Mic disabled while TTS is speaking (prevents feedback loop)
-//   #9: Clear, friendly error messages with suggested action
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import android.Manifest
@@ -312,9 +280,6 @@ fun SpeechScreen(navController: NavHostController) {
 }
 
 // ── MicSection ────────────────────────────────────────────────
-/**
- * The big central microphone button with pulsing rings.
- */
 @Composable
 private fun MicSection(
     isListening:         Boolean,
@@ -401,7 +366,7 @@ private fun MicSection(
                     Icon(
                         imageVector = when {
                             isTtsSpeaking -> Icons.AutoMirrored.Filled.VolumeUp
-                            isListening   -> Icons.Filled.MicOff
+                            isListening   -> Icons.Filled.Mic
                             else          -> Icons.Filled.Mic
                         },
                         contentDescription = micLabel,
@@ -423,10 +388,6 @@ private fun MicSection(
 }
 
 // ── LiveTextDisplay ────────────────────────────────────────────
-/**
- * Shows the real-time partial transcription as the user speaks,
- * plus error / no-speech messages.
- */
 @Composable
 private fun LiveTextDisplay(
     speechState: SpeechState,
@@ -497,10 +458,6 @@ private fun LiveTextDisplay(
 }
 
 // ── TranscriptCard ────────────────────────────────────────────
-/**
- * One confirmed speech result in the history list.
- * Has speak and delete action buttons.
- */
 @Composable
 private fun TranscriptCard(
     entry:    TranscriptEntry,

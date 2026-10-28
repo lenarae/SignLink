@@ -1,19 +1,3 @@
-// ============================================================
-// File: ui/screens/LearningScreen.kt
-// Purpose: Learning Mode — Phase 9.
-//
-// CURRENT STATE: Preview UI showing planned features.
-// Shows real content cards for planned sign lessons so
-// users understand the roadmap, not just "Coming Soon".
-//
-// PLANNED FEATURES (for future AI integration):
-//   - Alphabet lessons (A–Z)
-//   - Common phrases
-//   - Numbers
-//   - Practice mode with wristband detection
-//   - Progress tracking & streaks
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.*
@@ -54,9 +38,9 @@ data class LessonCategory(
 )
 
 data class SignPreview(
-    val sign:        String,  // The word/letter
-    val emoji:       String,  // Visual emoji hint
-    val difficulty:  String   // Beginner / Intermediate / Advanced
+    val sign:        String,
+    val emoji:       String,
+    val difficulty:  String
 )
 
 // ── Content data ──────────────────────────────────────────────

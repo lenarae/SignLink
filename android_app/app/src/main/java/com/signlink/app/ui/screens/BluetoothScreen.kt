@@ -1,22 +1,3 @@
-// ============================================================
-// File: ui/screens/BluetoothScreen.kt
-// Purpose: The complete Bluetooth management screen.
-//
-// This screen handles ALL Bluetooth states:
-//   1. Permissions check (request BT permissions if not granted)
-//   2. Scanning (animated radar + device list)
-//   3. Connecting (progress indicator)
-//   4. Connected (status card + disconnect button)
-//   5. Failed (error message + retry)
-//   6. Demo mode button (connects to simulated device instantly)
-//
-// Nielsen heuristics:
-//   - #1: Always shows current connection status
-//   - #3: Back button available in top bar
-//   - #4: Consistent status colors with rest of app
-//   - #9: Clear error messages with actionable retry button
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import android.Manifest
@@ -78,17 +59,13 @@ private val BLUETOOTH_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_C
 @Composable
 fun BluetoothScreen(navController: NavHostController) {
 
-    // hiltViewModel() auto-creates and injects the ViewModel
     val viewModel: BluetoothViewModel = hiltViewModel()
-
-    // Collect state flows as Compose State (lifecycle-aware)
     val connectionState   by viewModel.connectionState.collectAsStateWithLifecycle()
     val discoveredDevices by viewModel.discoveredDevices.collectAsStateWithLifecycle()
     val isScanning        by viewModel.isScanning.collectAsStateWithLifecycle()
     val isConnected       by viewModel.isConnected.collectAsStateWithLifecycle()
 
     // ── Permission launcher ───────────────────────────────────
-    // This shows the system permission dialog and gets the result
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -171,7 +148,6 @@ fun BluetoothScreen(navController: NavHostController) {
             )
 
             // ── Route to correct state UI ─────────────────────────
-            // Each connection state gets its own dedicated composable
             when (val state = connectionState) {
 
                 is ConnectionState.Disconnected -> DisconnectedContent(
@@ -219,9 +195,6 @@ fun BluetoothScreen(navController: NavHostController) {
 }
 
 // ── DisconnectedContent ────────────────────────────────────────
-/**
- * Shown when not connected. Displays the scan button and device list.
- */
 @Composable
 private fun DisconnectedContent(
     devices:    List<BleDevice>,
@@ -288,7 +261,7 @@ private fun DisconnectedContent(
         // ── Device cards ───────────────────────────────────────
         items(
             items = devices,
-            key   = { it.address }   // Stable keys for efficient recomposition
+            key   = { it.address }
         ) { device ->
             DeviceCard(
                 device    = device,
@@ -296,7 +269,6 @@ private fun DisconnectedContent(
             )
         }
 
-        // ── Empty state ────────────────────────────────────────
         if (devices.isEmpty() && !isScanning) {
             item {
                 EmptyDeviceState()
@@ -324,16 +296,13 @@ private fun DisconnectedContent(
 }
 
 // ── ScanHeader ────────────────────────────────────────────────
-/**
- * Animated pulse ring + scan button at the top.
- */
 @Composable
 private fun ScanHeader(
     isScanning: Boolean,
     onScan:     () -> Unit,
     onStopScan: () -> Unit
 ) {
-    // Pulsing animation for the scan ring
+    // Pulsing animation
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue  = 1f,
@@ -456,10 +425,6 @@ private fun ScanHeader(
 }
 
 // ── DeviceCard ────────────────────────────────────────────────
-/**
- * A single discovered device shown in the scan results list.
- * SignLink devices are highlighted differently from generic devices.
- */
 @Composable
 private fun DeviceCard(
     device:    BleDevice,
@@ -589,9 +554,6 @@ private fun DeviceCard(
 }
 
 // ── ConnectingContent ─────────────────────────────────────────
-/**
- * Full-screen loading state while establishing BLE connection.
- */
 @Composable
 private fun ConnectingContent(
     deviceName: String,
@@ -634,9 +596,6 @@ private fun ConnectingContent(
 }
 
 // ── ConnectedContent ──────────────────────────────────────────
-/**
- * Shown when successfully connected. Provides quick-action buttons.
- */
 @Composable
 private fun ConnectedContent(
     device:       BleDevice,
@@ -715,7 +674,7 @@ private fun ConnectedContent(
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold
             ),
-            color = SignLinkTeal700,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -732,7 +691,8 @@ private fun ConnectedContent(
                     .height(60.dp),
                 shape  = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = SignLinkTeal500
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor   = MaterialTheme.colorScheme.onPrimary
                 ),
                 elevation = ButtonDefaults.buttonElevation(0.dp)
             ) {
@@ -752,9 +712,9 @@ private fun ConnectedContent(
                     .fillMaxWidth()
                     .height(60.dp),
                 shape  = RoundedCornerShape(14.dp),
-                border = BorderStroke(1.5.dp, SignLinkTeal500),
+                border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = SignLinkTeal500
+                    contentColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 Icon(Icons.Filled.Tune, null, modifier = Modifier.size(22.dp))
@@ -784,9 +744,6 @@ private fun ConnectedContent(
 }
 
 // ── FailedContent ─────────────────────────────────────────────
-/**
- * Shows a clear error message with retry options.
- */
 @Composable
 private fun FailedContent(
     reason:    String,

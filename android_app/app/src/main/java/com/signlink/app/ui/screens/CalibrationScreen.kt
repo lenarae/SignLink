@@ -1,8 +1,3 @@
-// ============================================================
-// File: ui/screens/CalibrationScreen.kt
-// Purpose: 4-step device calibration wizard.
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.*
@@ -359,7 +354,6 @@ private fun CompleteContent(onGoHome: () -> Unit) {
     val color1 by infiniteTransition.animateColor(initialValue = MaterialTheme.colorScheme.primary, targetValue = MaterialTheme.colorScheme.tertiary, animationSpec = infiniteRepeatable(animation = tween(3000, easing = LinearEasing), repeatMode = RepeatMode.Reverse), label = "color1")
     val color2 by infiniteTransition.animateColor(initialValue = MaterialTheme.colorScheme.primaryContainer, targetValue = MaterialTheme.colorScheme.tertiaryContainer, animationSpec = infiniteRepeatable(animation = tween(4500, easing = LinearEasing), repeatMode = RepeatMode.Reverse), label = "color2")
 
-    // Success State: Centered content with dynamic background
     Box(
         modifier = Modifier
             .fillMaxSize()

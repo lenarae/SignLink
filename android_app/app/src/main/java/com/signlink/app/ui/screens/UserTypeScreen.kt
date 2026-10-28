@@ -131,7 +131,6 @@ fun UserTypeScreen(navController: NavHostController) {
             Spacer(Modifier.height(32.dp))
 
             // ── USER TYPE CARDS ───────────────────────────────
-            // Flex-box behavior: Use a Column that can grow but maintains uniformity
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -235,7 +234,8 @@ fun UserTypeCard(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icon square box
+
+
                 Box(
                     modifier = Modifier
                         .size(52.dp)
@@ -272,8 +272,7 @@ fun UserTypeCard(
                         lineHeight = 18.sp
                     )
                 }
-                
-                // Placeholder space for checkmark so text doesn't shift
+
                 Spacer(Modifier.width(32.dp))
             }
 

@@ -1,14 +1,3 @@
-// ============================================================
-// File: data/bluetooth/BleDevice.kt
-// Purpose: Data model representing one discovered BLE device.
-//
-// This is a simple data class — it just holds information.
-// No logic, no Android SDK imports, easily testable.
-//
-// Fields match what Android's BluetoothDevice gives us,
-// plus our app-specific fields (isSimulated, signalStrength).
-// ============================================================
-
 package com.signlink.app.data.bluetooth
 
 /**
@@ -28,10 +17,7 @@ data class BleDevice(
     val rssi:        Int,
     val isSimulated: Boolean = false
 ) {
-    /**
-     * Human-readable display name for the UI.
-     * Falls back to the MAC address if no name was broadcast.
-     */
+
     val displayName: String
         get() = when {
             !name.isNullOrBlank() -> name
@@ -39,10 +25,6 @@ data class BleDevice(
             else                  -> "Unknown Device ($address)"
         }
 
-    /**
-     * Signal strength as a human-readable label.
-     * Based on standard RSSI interpretation guidelines.
-     */
     val signalLabel: String
         get() = when {
             rssi >= -50 -> "Excellent"
@@ -52,17 +34,10 @@ data class BleDevice(
             else        -> "Very Weak"
         }
 
-    /**
-     * Signal strength as a 0.0–1.0 float for progress bars.
-     * Maps the typical range -100..0 to 0..1.
-     */
     val signalStrength: Float
         get() = ((rssi + 100f) / 100f).coerceIn(0f, 1f)
 
-    /**
-     * Whether this looks like a SignLink wristband.
-     * Real wristband would advertise a name starting with "SignLink".
-     */
+
     val isSignLinkDevice: Boolean
         get() = isSimulated || (name?.startsWith("SignLink", ignoreCase = true) == true)
 }

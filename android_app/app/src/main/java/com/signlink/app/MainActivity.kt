@@ -1,9 +1,3 @@
-// ============================================================
-// File: MainActivity.kt  [FINAL — Phase 8]
-// Now reads dark mode + high contrast from DataStore so the
-// theme updates instantly when settings change.
-// ============================================================
-
 package com.signlink.app
 
 import android.os.Bundle
@@ -41,12 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Collect settings as Compose State
             val settings by settingsDataStore.settings.collectAsState(initial = null)
-
-            // Improvement #1 & #2: Smart App Launch + Navigation Stability
-            // We wait for the first DataStore emission to decide where to go.
-            // This prevents the NavHost from "flipping" start destinations.
             if (settings == null) {
-                // Optional: Show a beautiful splash or loader
                 Box(
                     modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
                     contentAlignment = Alignment.Center

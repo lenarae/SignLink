@@ -146,3 +146,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+// Fix for "task 'unitTestClasses' not found in project ':app'"
+tasks.register("unitTestClasses") {
+    group = "verification"
+    description = "Assembles all unit test classes."
+    dependsOn(tasks.matching { it.name.endsWith("UnitTestClasses") })
+}

@@ -1,18 +1,3 @@
-// ============================================================
-// File: ui/screens/ChatHistoryScreen.kt
-// Purpose: Browse, search and manage local chat history.
-//
-// FEATURES:
-//   - Toggle between "All Messages" and "By Session" views
-//   - Live search with 300ms debounce
-//   - Per-message: source badge (SIGN / SPEECH), confidence, time
-//   - Swipe-to-delete messages (via dismiss button)
-//   - Session drill-down with full message list
-//   - Delete session or all history with confirmation dialog
-//   - "Seed demo data" button when empty (for testing)
-//   - Message count badge in header
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.animation.*
@@ -63,7 +48,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
     val selectedMessages    by viewModel.selectedSessionMessages.collectAsStateWithLifecycle()
     val showDeleteAllDialog by viewModel.showDeleteAllDialog.collectAsStateWithLifecycle()
 
-    // Delete-all confirmation dialog
+
     if (showDeleteAllDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.hideDeleteAllDialog() },
@@ -116,7 +101,6 @@ fun ChatHistoryScreen(navController: NavHostController) {
                         }
                     },
                     actions = {
-                        // Delete all button (only when there's something to delete)
                         if (messageCount > 0) {
                             IconButton(onClick = { viewModel.showDeleteAllDialog() }) {
                                 Icon(
@@ -246,9 +230,6 @@ fun ChatHistoryScreen(navController: NavHostController) {
 }
 
 // ── MessageCard ────────────────────────────────────────────────
-/**
- * A single chat message card with source badge, time, and delete.
- */
 @Composable
 private fun MessageCard(
     message:  ChatMessage,
@@ -420,6 +401,7 @@ private fun SourceBadge(source: MessageSource) {
     val (label, color) = when (source) {
         MessageSource.SIGN   -> "🤟 SIGN"   to SignLinkTeal500
         MessageSource.SPEECH -> "🎙️ SPEECH" to MaterialTheme.colorScheme.secondary
+        MessageSource.TTS    -> "⌨️ TTS"    to MaterialTheme.colorScheme.tertiary
         MessageSource.SYSTEM -> "ℹ️ SYSTEM" to MaterialTheme.colorScheme.outline
     }
     Surface(

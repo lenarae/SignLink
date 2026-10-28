@@ -1,13 +1,3 @@
-// ============================================================
-// File: data/local/AppSettingsDataStore.kt  [FIXED]
-// Purpose: Reads and writes user preferences via DataStore.
-//
-// FIX: Removed @Inject constructor and @Singleton annotations.
-// DatabaseModule now provides this as a @Singleton explicitly,
-// which is the correct pattern when you need constructor args
-// (Context) that Hilt can't infer automatically.
-// ============================================================
-
 package com.signlink.app.data.local
 
 import android.content.Context
@@ -21,16 +11,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-// The DataStore file is created once per Context via this extension property.
-// Using a top-level property prevents multiple DataStore instances for the same file.
 private val Context.dataStore: DataStore<Preferences>
         by preferencesDataStore(name = "signlink_settings")
 
 class AppSettingsDataStore(private val context: Context) {
 
-    // ── Settings flow ─────────────────────────────────────────
-    // Emits a new AppSettings snapshot whenever any preference changes.
-    // .catch ensures corrupted storage emits defaults rather than crashing.
     val settings: Flow<AppSettings> = context.dataStore.data
         .catch { emit(emptyPreferences()) }
         .map { prefs -> prefs.toAppSettings() }
@@ -75,6 +60,13 @@ class AppSettingsDataStore(private val context: Context) {
 
     suspend fun resetToDefaults() =
         context.dataStore.edit { it.clear() }
+
+
+
+
+
+
+
 
     // ── Mapping helper ─────────────────────────────────────────
     private fun Preferences.toAppSettings() = AppSettings(

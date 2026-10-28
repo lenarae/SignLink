@@ -1,15 +1,3 @@
-// ============================================================
-// File: di/DatabaseModule.kt  [FIXED]
-// Purpose: Hilt module — SOLE constructor of Room DB and DAO.
-//
-// FIX: Now uses Room.databaseBuilder() directly instead of
-// delegating to SignLinkDatabase.getInstance(). This guarantees
-// Hilt manages exactly one DB instance for the app's lifetime.
-//
-// Also provides AppSettingsDataStore here so all data-layer
-// singletons come from one module.
-// ============================================================
-
 package com.signlink.app.di
 
 import android.content.Context
@@ -37,8 +25,6 @@ object DatabaseModule {
         SignLinkDatabase::class.java,
         "signlink_database.db"
     )
-        // In development: wipe and rebuild if schema changes.
-        // Before release: replace with proper Migration objects.
         .fallbackToDestructiveMigration(dropAllTables = true)
         .build()
 

@@ -1,19 +1,3 @@
-// ============================================================
-// File: utils/ErrorHandler.kt
-// Purpose: Centralised error classification and user-friendly
-// message generation. Used across all screens.
-//
-// WHY CENTRALISE ERRORS?
-//   - Consistent tone and vocabulary across all error messages
-//   - One place to improve all error messages at once
-//   - Easier to add error logging / crash reporting later
-//   - Each screen doesn't need to know error implementation details
-//
-// USAGE:
-//   val message = ErrorHandler.getMessage(exception)
-//   val action  = ErrorHandler.getAction(exception)
-// ============================================================
-
 package com.signlink.app.utils
 
 import android.bluetooth.BluetoothAdapter

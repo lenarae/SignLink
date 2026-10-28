@@ -1,8 +1,3 @@
-// ============================================================
-// File: ui/screens/HomeScreen.kt
-// Now observes real BLE connection state via BluetoothViewModel.
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.foundation.background

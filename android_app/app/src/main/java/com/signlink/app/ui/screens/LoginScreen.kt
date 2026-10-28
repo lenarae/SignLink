@@ -1,25 +1,3 @@
-// ============================================================
-// File: ui/screens/LoginScreen.kt
-// Purpose: Email + password login UI.
-//
-// IMPORTANT: This is UI only — no real authentication backend.
-// The "Sign In" button navigates directly to Home for now.
-// Future phases can plug in Firebase / Supabase / backend here.
-//
-// Features:
-//   - Email field with keyboard type + validation hint
-//   - Password field with show/hide toggle (eye icon)
-//   - Error state display (red border + message)
-//   - "Forgot Password?" link (placeholder action)
-//   - Loading state on Sign In button
-//   - Keyboard done action submits form
-//
-// Nielsen heuristics:
-//   - #1: Loading spinner shows processing status
-//   - #5: Error prevention (validate before submit)
-//   - #9: Clear error messages when input is wrong
-// ============================================================
-
 package com.signlink.app.ui.screens
 
 import androidx.compose.foundation.background
@@ -95,14 +73,13 @@ fun LoginScreen(navController: NavHostController) {
     }
 
     // ── Submit handler ────────────────────────────────────────
-    // Simulates a network call with a 1.5s delay, then navigates home
     fun onSignIn() {
         focusManager.clearFocus()
         if (!validate()) return
 
         coroutineScope.launch {
             isLoading = true
-            delay(1500)   // ← Replace with real auth call in future
+            delay(1500)   // Replace with real auth call in future
             isLoading = false
             // Navigate to Home, clearing the back stack so Back doesn't return to Login
             navController.navigate(Screen.Home.route) {
