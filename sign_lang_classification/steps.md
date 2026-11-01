@@ -16,7 +16,8 @@ Side notes:
 
 **3. Create virtual environment (pip3)**
 
-&nbsp;	python -m virtualenv venv 
+&nbsp;	python -m virtualenv venv  / python -m venv venv
+
 
 &nbsp;  Folder structure will now look like:
 
