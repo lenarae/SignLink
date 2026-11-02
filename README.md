@@ -1,3 +1,10 @@
+> ⚠️ **LEGAL NOTICE & LICENSING**
+> 
+> **SignLink** is a proprietary research and development project created by **Sombatla Truc Deydeepya Lakshmi** and **Satwik Biswas**. 
+> - Source code is visible and open for community testing, code review, and non-commercial collaboration.
+> - **Commercial use, production deployment, or redistribution without written consent is strictly prohibited.**
+> - All contributors must sign our Contributor License Agreement (`CLA.md`) prior to merging code.
+
 # SignLink 
 SignLink is an undergraduate honors project that focuses on bridging communication gaps between sign-language users and non-signers by translating sign language gestures into real-time text and speech using wearable sensors and machine learning.
 
