@@ -28,7 +28,7 @@ import androidx.navigation.NavHostController
 import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
 
-// ── Data models for learning content ─────────────────────────
+//Data models for learning content
 data class LessonCategory(
     val title:       String,
     val icon:        String,
@@ -43,7 +43,7 @@ data class SignPreview(
     val difficulty:  String
 )
 
-// ── Content data ──────────────────────────────────────────────
+//Content data
 private val LESSON_CATEGORIES = listOf(
     LessonCategory("Alphabet",       "🔤", "Learn all 26 handshape letters (A–Z)",    26, false),
     LessonCategory("Numbers",        "🔢", "Count from 0 to 100 in ASL",              12, false),
@@ -112,7 +112,7 @@ fun LearningScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-            // ── Hero banner ───────────────────────────────────
+            //Hero banner
             item {
                 Box(
                     modifier = Modifier
@@ -171,7 +171,7 @@ fun LearningScreen(navController: NavHostController) {
                 }
             }
 
-            // ── Quick signs preview ───────────────────────────
+            //Quick signs preview
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
@@ -194,7 +194,7 @@ fun LearningScreen(navController: NavHostController) {
                 }
             }
 
-            // ── Planned lesson categories ─────────────────────
+            //Planned lesson categories
             item {
                 Text(
                     text  = "Planned lessons",
@@ -206,7 +206,7 @@ fun LearningScreen(navController: NavHostController) {
                 LessonCategoryCard(category = category)
             }
 
-            // ── Roadmap card ──────────────────────────────────
+            //Roadmap card
             item {
                 RoadmapCard()
             }
@@ -216,7 +216,7 @@ fun LearningScreen(navController: NavHostController) {
     }
 }
 
-// ── SignPreviewCard ───────────────────────────────────────────
+//SignPreviewCard
 @Composable
 private fun SignPreviewCard(sign: SignPreview) {
     Card(
@@ -248,7 +248,7 @@ private fun SignPreviewCard(sign: SignPreview) {
     }
 }
 
-// ── LessonCategoryCard ────────────────────────────────────────
+//LessonCategoryCard
 @Composable
 private fun LessonCategoryCard(category: LessonCategory) {
     Card(
@@ -336,7 +336,7 @@ private fun LessonCategoryCard(category: LessonCategory) {
     }
 }
 
-// ── RoadmapCard ───────────────────────────────────────────────
+//RoadmapCard
 @Composable
 private fun RoadmapCard() {
     Card(

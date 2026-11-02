@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    // ── Current settings (live from DataStore) ────────────────
+    //Current settings (live from DataStore)
     val settings: StateFlow<AppSettings> = settingsDataStore.settings
         .stateIn(
             scope         = viewModelScope,
@@ -37,14 +37,14 @@ class SettingsViewModel @Inject constructor(
             initialValue  = AppSettings()
         )
 
-    // ── Reset confirmation dialog state ───────────────────────
+    //Reset confirmation dialog state
     private val _showResetDialog      = MutableStateFlow(false)
     val showResetDialog: StateFlow<Boolean> = _showResetDialog.asStateFlow()
 
     private val _showClearDataDialog  = MutableStateFlow(false)
     val showClearDataDialog: StateFlow<Boolean> = _showClearDataDialog.asStateFlow()
 
-    // ── Snackbar / feedback state ─────────────────────────────
+    //Snackbar / feedback state
     private val _feedbackMessage = MutableStateFlow<String?>(null)
     val feedbackMessage: StateFlow<String?> = _feedbackMessage.asStateFlow()
 

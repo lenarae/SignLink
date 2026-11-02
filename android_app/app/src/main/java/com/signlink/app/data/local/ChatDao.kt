@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ChatDao {
 
-    // ── INSERT ─────────────────────────────────────────────────
+    //INSERT
 
     /**
      * Insert a new message. Returns the new row ID.
@@ -21,7 +21,7 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessages(messages: List<ChatMessage>)
 
-    // ── SELECT ─────────────────────────────────────────────────
+    //SELECT
 
     /**
      * Get ALL messages, newest first.
@@ -57,7 +57,7 @@ interface ChatDao {
     @Query("SELECT * FROM chat_messages WHERE text LIKE '%' || :query || '%' ORDER BY timestamp_ms DESC")
     fun searchMessages(query: String): Flow<List<ChatMessage>>
 
-    // ── DELETE ─────────────────────────────────────────────────
+    // DELETE
 
     @Delete
     suspend fun deleteMessage(message: ChatMessage)

@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun WelcomeScreen(navController: NavHostController) {
 
-    // ── Animation state flags ─────────────────────────────────
+    // Animation state flags
     var showLogo     by remember { mutableStateOf(false) }
     var showHeadline by remember { mutableStateOf(false) }
     var showTagline  by remember { mutableStateOf(false) }
@@ -51,7 +51,7 @@ fun WelcomeScreen(navController: NavHostController) {
         showButtons  = true
     }
 
-    // ── Floating orb animations ───────────────────────────────
+    //Floating orb animations
     val infiniteTransition = rememberInfiniteTransition(label = "orbs")
     val orb1Y by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -72,7 +72,7 @@ fun WelcomeScreen(navController: NavHostController) {
         label = "orb2"
     )
 
-    // ── Background gradient ───────────────────────────────────
+    //Background gradient
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +95,7 @@ fun WelcomeScreen(navController: NavHostController) {
             )
     ) {
 
-        // ── Decorative background orbs ─────────────────────────
+        // Decorative background orbs
         Box(
             modifier = Modifier
                 .size(300.dp)
@@ -112,7 +112,7 @@ fun WelcomeScreen(navController: NavHostController) {
                 .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.08f))
         )
 
-        // ── Main content column ────────────────────────────────
+        // Main content column
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
@@ -124,13 +124,13 @@ fun WelcomeScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(48.dp)
         ) {
 
-            // ── TOP: Logo + Text section ───────────────────────
+            //TOP: Logo + Text section
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-                // ── Logo ────────────────────────────────────────
+                //Logo
                 AnimatedVisibility(
                     visible = showLogo,
                     enter = scaleIn(initialScale = 0.5f) + fadeIn()
@@ -167,7 +167,7 @@ fun WelcomeScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── App Name ─────────────────────────────────────
+                //App Name
                 AnimatedVisibility(
                     visible = showHeadline,
                     enter = slideInVertically { it / 2 } + fadeIn()
@@ -193,7 +193,7 @@ fun WelcomeScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── Tagline ───────────────────────────────────────
+                //Tagline
                 AnimatedVisibility(
                     visible = showTagline,
                     enter = slideInVertically { it / 2 } + fadeIn()
@@ -209,7 +209,7 @@ fun WelcomeScreen(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // ── Feature Pills ─────────────────────────────────
+                //Feature Pills
                 AnimatedVisibility(
                     visible = showPills,
                     enter = fadeIn()
@@ -230,7 +230,7 @@ fun WelcomeScreen(navController: NavHostController) {
                 }
             }
 
-            // ── BOTTOM: CTA Buttons ────────────────────────────
+            //BOTTOM: CTA Buttons
             AnimatedVisibility(
                 visible = showButtons,
                 enter = slideInVertically { it } + fadeIn()
@@ -275,7 +275,7 @@ fun WelcomeScreen(navController: NavHostController) {
             }
         }
 
-        // ── Settings Button ──
+        //Settings Button
         IconButton(
             onClick = { navController.navigate(Screen.Settings.route) },
             modifier = Modifier

@@ -119,7 +119,7 @@ fun PairDeviceScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // ── TOP: Hero Icon ────────────────────────────────
+            //TOP: Hero Icon
             Box(
                 modifier = Modifier
                     .size(80.dp)
@@ -135,7 +135,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                 )
             }
 
-            // ── HEADER ────────────────────────────────────────
+            //HEADER
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = stringResource(R.string.pair_device_title),
@@ -156,7 +156,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                 )
             }
 
-            // ── INSTRUCTIONS ──────────────────────────────────
+            //INSTRUCTIONS
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -180,7 +180,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                 }
             }
 
-            // ── SCAN BUTTON ───────────────────────────────────
+            //SCAN BUTTON
             Button(
                 onClick = { if (isScanning) viewModel.stopScan() else viewModel.startScan() },
                 modifier = Modifier
@@ -217,7 +217,7 @@ fun PairDeviceScreen(navController: NavHostController) {
                 }
             }
 
-            // ── DEVICE LIST ───────────────────────────────────
+            //DEVICE LIST
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)

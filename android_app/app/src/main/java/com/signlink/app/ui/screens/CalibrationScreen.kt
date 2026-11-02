@@ -152,7 +152,7 @@ private fun ReadyToStartContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        // ── TOP: Header ───────────────────────────────────
+        //TOP: Header
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
                 modifier = Modifier
@@ -188,7 +188,7 @@ private fun ReadyToStartContent(
             )
         }
 
-        // ── MIDDLE: Gesture steps list ─────────────────────
+        //MIDDLE: Gesture steps list
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -228,7 +228,7 @@ private fun ReadyToStartContent(
             }
         }
 
-        // ── BOTTOM: Tip & Buttons ──────────────────────────
+        //BOTTOM: Tip & Buttons
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Box(
                 modifier = Modifier

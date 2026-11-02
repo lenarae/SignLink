@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.signlink.app.data.local.ThemeMode
 
-// ── Custom Theme Extensions ──────────────────────────────────
+//Custom Theme Extensions
 data class SignLinkColors(
     val success: Color,
     val error: Color
@@ -39,7 +39,7 @@ object SignLinkTheme {
         get() = LocalSignLinkColors.current
 }
 
-// ── Light Color Scheme ────────────────────────────────────────
+//Light Color Scheme
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF008399),
     onPrimary = Color.White,
@@ -68,7 +68,7 @@ private val LightColorScheme = lightColorScheme(
     outline = Color(0xFF00697A)
 )
 
-// ── Dark Color Scheme ─────────────────────────────────────────
+//Dark Color Scheme
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF00E5FF),
     onPrimary = Color(0xFF001F26),
@@ -97,7 +97,7 @@ private val DarkColorScheme = darkColorScheme(
     outline = Color(0xFF00697A)
 )
 
-// ── High Contrast Color Scheme ────────────────────────────────
+//High Contrast Color Scheme
 private val HighContrastColorScheme = darkColorScheme(
     primary = HighContrastAccent,
     onPrimary = HighContrastBackground,

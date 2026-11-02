@@ -55,7 +55,7 @@ fun SpeechScreen(navController: NavHostController) {
     val ttsState     by viewModel.ttsState.collectAsStateWithLifecycle()
     val autoSpeak    by viewModel.autoSpeak.collectAsStateWithLifecycle()
 
-    // ── Microphone permission ─────────────────────────────────
+    // Microphone permission
     var micPermissionGranted by remember { mutableStateOf(false) }
     var micPermissionDenied  by remember { mutableStateOf(false) }
 
@@ -159,7 +159,7 @@ fun SpeechScreen(navController: NavHostController) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-            // ── Mic button section ────────────────────────────
+            //Mic button section
             item {
                 MicSection(
                     isListening          = isListening,
@@ -181,7 +181,7 @@ fun SpeechScreen(navController: NavHostController) {
                 )
             }
 
-            // ── Live partial text display ─────────────────────
+            //Live partial text display
             item {
                 LiveTextDisplay(
                     speechState = speechState,
@@ -189,7 +189,7 @@ fun SpeechScreen(navController: NavHostController) {
                 )
             }
 
-            // ── Transcript header + action buttons ────────────
+            //Transcript header + action buttons
             if (history.isNotEmpty()) {
                 item {
                     Row(
@@ -232,7 +232,7 @@ fun SpeechScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── History entries ───────────────────────────
+                //History entries
                 items(
                     items = history,
                     key   = { it.timestampMs }
@@ -245,7 +245,7 @@ fun SpeechScreen(navController: NavHostController) {
                 }
             }
 
-            // ── Empty state ───────────────────────────────────
+            //Empty state
             if (history.isEmpty() && !isListening) {
                 item { SpeechEmptyState(isAvailable = viewModel.isAvailable) }
             }
@@ -279,7 +279,7 @@ fun SpeechScreen(navController: NavHostController) {
 }
 }
 
-// ── MicSection ────────────────────────────────────────────────
+//MicSection
 @Composable
 private fun MicSection(
     isListening:         Boolean,
@@ -387,7 +387,7 @@ private fun MicSection(
     }
 }
 
-// ── LiveTextDisplay ────────────────────────────────────────────
+// LiveTextDisplay
 @Composable
 private fun LiveTextDisplay(
     speechState: SpeechState,
@@ -457,7 +457,7 @@ private fun LiveTextDisplay(
     }
 }
 
-// ── TranscriptCard ────────────────────────────────────────────
+//TranscriptCard
 @Composable
 private fun TranscriptCard(
     entry:    TranscriptEntry,
@@ -518,7 +518,7 @@ private fun TranscriptCard(
     }
 }
 
-// ── SpeechEmptyState ──────────────────────────────────────────
+//SpeechEmptyState
 @Composable
 private fun SpeechEmptyState(isAvailable: Boolean) {
     Card(

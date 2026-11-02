@@ -24,15 +24,15 @@ enum class TtsState {
 class TextToSpeechManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // ── State ─────────────────────────────────────────────────
+    //State
     private val _ttsState = MutableStateFlow(TtsState.INITIALIZING)
     val ttsState: StateFlow<TtsState> = _ttsState.asStateFlow()
 
-    // ── Settings ──────────────────────────────────────────────
+    //Settings
     private var speechRate  = 1.0f
     private var speechPitch = 1.0f
 
-    // ── The underlying TTS engine ────────────────────────────
+    //The underlying TTS engine
     private var tts: TextToSpeech? = null
 
     init {

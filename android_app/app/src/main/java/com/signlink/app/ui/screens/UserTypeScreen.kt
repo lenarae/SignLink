@@ -82,7 +82,7 @@ fun UserTypeScreen(navController: NavHostController) {
                 .padding(horizontal = 24.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ── HEADER ────────────────────────────────────────
+            // HEADER
             Text(
                 text = stringResource(R.string.user_type_title),
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -103,7 +103,7 @@ fun UserTypeScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(32.dp))
 
-            // ── INFO BOX ──────────────────────────────────────
+            //INFO BOX
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,7 +130,7 @@ fun UserTypeScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(32.dp))
 
-            // ── USER TYPE CARDS ───────────────────────────────
+            //USER TYPE CARDS
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -170,7 +170,7 @@ fun UserTypeScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(48.dp))
 
-            // ── CONTINUE BUTTON ───────────────────────────────
+            //CONTINUE BUTTON
             Button(
                 onClick = { 
                     localSelectedType?.let { type ->

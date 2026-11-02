@@ -3,9 +3,9 @@ package com.signlink.app.data.bluetooth
 /**
  * Represents a Bluetooth Low Energy device found during scanning.
  *
- * @param address       Unique MAC address, e.g. "AA:BB:CC:DD:EE:FF"
- * @param name          Device name broadcast by the peripheral.
- *                      Can be null if device hasn't advertised a name.
+ * @param address
+ * @param name
+ *
  * @param rssi          Signal strength in dBm. Range: -100 (far) to 0 (very close).
  *                      Typical usable range: -70 to -30 dBm.
  * @param isSimulated   true = this is our mock device for testing without hardware.

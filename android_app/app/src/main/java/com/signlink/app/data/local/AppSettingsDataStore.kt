@@ -20,7 +20,7 @@ class AppSettingsDataStore(private val context: Context) {
         .catch { emit(emptyPreferences()) }
         .map { prefs -> prefs.toAppSettings() }
 
-    // ── Write functions (one per preference) ──────────────────
+    // Write functions (one per preference)
 
     suspend fun setTheme(mode: ThemeMode) =
         context.dataStore.edit { it[SettingsKeys.THEME] = mode.name }
@@ -68,7 +68,7 @@ class AppSettingsDataStore(private val context: Context) {
 
 
 
-    // ── Mapping helper ─────────────────────────────────────────
+    //Mapping helper
     private fun Preferences.toAppSettings() = AppSettings(
         theme            = this[SettingsKeys.THEME]
             ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }

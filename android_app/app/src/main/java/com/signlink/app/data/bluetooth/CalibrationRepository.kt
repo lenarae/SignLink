@@ -29,8 +29,6 @@ class CalibrationRepository @Inject constructor() {
 
     private var calibrationJob: Job? = null
 
-
-    /** Begin the full calibration sequence from Step 1. */
     fun startCalibration() {
         calibrationJob?.cancel()
         _signalStrength.value  = 0f
@@ -61,17 +59,14 @@ class CalibrationRepository @Inject constructor() {
         _channelQualities.value = List(8) { 0f }
     }
 
-    /** Retry after failure — restarts from Step 1. */
+
     fun retry() = startCalibration()
 
     // ══════════════════════════════════════════════════════════
     // PRIVATE HELPERS
     // ══════════════════════════════════════════════════════════
 
-    /**
-     * Runs a single calibration step, animating progress and signal.
-     * Returns true if the step succeeded, false if it should fail.
-     */
+
     private suspend fun runStep(step: CalibrationStep): Boolean {
         val messages = stepMessages(step.number)
         val tickMs   = 100L

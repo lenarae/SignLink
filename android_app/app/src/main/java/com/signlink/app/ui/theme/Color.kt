@@ -19,13 +19,13 @@ val SignLinkListening    = Color(0xFF4285F4)
 val SignLinkConnecting   = Color(0xFFFBBC05)
 val ErrorDisconnected    = Color(0xFFEA4335)
 
-// ── Theme-Aware Functional Colors ──────────────────────────────
+// Theme-Aware Functional Colors
 val SuccessDark = Color(0xFF81C784)
 val ErrorDark   = Color(0xFFE57373)
 val SuccessHC   = Color(0xFF00FF00)
 val ErrorHC     = Color(0xFFFF0000)
 
-// ── Primary: Deep Teal  ──────────────────
+//Primary: Deep Teal
 val Primary10 = Color(0xFF001F26)
 val Primary20 = Color(0xFF00363F)
 val Primary30 = Color(0xFF004F5C)
@@ -34,32 +34,32 @@ val Primary80 = Color(0xFF55D6F3)
 val Primary90 = Color(0xFFADEAFF)
 val Primary95 = Color(0xFFD6F6FF)
 
-// ── Secondary: Sophisticated Slate  ───────────────
+//Secondary: Sophisticated Slate
 val Secondary10 = Color(0xFF191C1D)
 val Secondary20 = Color(0xFF2D3132)
 val Secondary40 = Color(0xFF5A6063)
 val Secondary80 = Color(0xFFBEC8CC)
 val Secondary90 = Color(0xFFDAE4E8)
 
-// ── Tertiary: Soft Violet  ─────────────────────
+//Tertiary: Soft Violet
 val Tertiary10 = Color(0xFF251431)
 val Tertiary40 = Color(0xFF6D5677)
 val Tertiary80 = Color(0xFFD9BDE3)
 val Tertiary90 = Color(0xFFF6D9FF)
 
-// ── Neutral / Surface ─────────────────────────────────────────
+//Neutral / Surface
 val Neutral10 = Color(0xFF191C1C)
 val Neutral20 = Color(0xFF2E3131)
 val Neutral90 = Color(0xFFE1E3E3)
 val Neutral95 = Color(0xFFEFF1F1)
 val Neutral99 = Color(0xFFFBFDFD)
 
-// ── Functional Colors  ─────────────────────────
+//Functional Colors
 val Success = Color(0xFF2DD882)
 val Error   = Color(0xFFBA1A1A)
 val Warning = Color(0xFFFFB300)
 
-// ── High Contrast Mode ────────────────────────────────────────
+// High Contrast Mode
 val HighContrastBackground = Color(0xFF000000)
 val HighContrastSurface    = Color(0xFF1A1A1A)
 val HighContrastText       = Color(0xFFFFFFFF)

@@ -4,7 +4,7 @@ import java.util.UUID
 
 object BleConstants {
 
-    // ── Scan settings ─────────────────────────────────────────
+    //Scan settings
     const val SCAN_DURATION_MS = 10_000L
     const val SCAN_COOLDOWN_MS = 2_000L
 
@@ -18,13 +18,13 @@ object BleConstants {
 
 
 
-    // ── Simulated device ──────────────────────────────────────
+    //Simulated device
     const val SIMULATED_DEVICE_ADDRESS = "00:11:22:33:44:55"
     const val SIMULATED_DEVICE_NAME    = "SignLink Wristband"
     const val SIMULATED_DEVICE_RSSI    = -45
 
 
-    // ── Mock gesture stream ───────────────────────────────────
+    //Mock gesture stream
     const val MOCK_GESTURE_INTERVAL_MS = 2_500L
     val MOCK_GESTURES = listOf(
         "Hello", "Yes", "No", "Thank you", "Please",

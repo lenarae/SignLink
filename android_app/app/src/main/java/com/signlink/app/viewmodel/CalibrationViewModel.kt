@@ -14,7 +14,7 @@ class CalibrationViewModel @Inject constructor(
     private val calibrationRepository: CalibrationRepository
 ) : ViewModel() {
 
-    // ── Direct repository flows ───────────────────────────────
+    //Direct repository flows
     val sessionState: StateFlow<CalibrationSessionState> =
         calibrationRepository.sessionState
 

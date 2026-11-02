@@ -40,7 +40,7 @@ import com.signlink.app.navigation.Screen
 import com.signlink.app.ui.theme.*
 import com.signlink.app.viewmodel.BluetoothViewModel
 
-// ── Permission list ───────────────────────────────────────────
+//Permission list
 // Android 12+ needs BLUETOOTH_SCAN and BLUETOOTH_CONNECT.
 // Older versions need FINE_LOCATION for BLE scanning.
 private val BLUETOOTH_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -54,7 +54,7 @@ private val BLUETOOTH_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_C
     )
 }
 
-// ── BluetoothScreen ────────────────────────────────────────────
+//BluetoothScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BluetoothScreen(navController: NavHostController) {
@@ -65,7 +65,7 @@ fun BluetoothScreen(navController: NavHostController) {
     val isScanning        by viewModel.isScanning.collectAsStateWithLifecycle()
     val isConnected       by viewModel.isConnected.collectAsStateWithLifecycle()
 
-    // ── Permission launcher ───────────────────────────────────
+    //Permission launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -73,7 +73,7 @@ fun BluetoothScreen(navController: NavHostController) {
         viewModel.onPermissionsResult(allGranted)
     }
 
-    // ── Auto-request permissions on first load ────────────────
+    //Auto-request permissions on first load
     LaunchedEffect(Unit) {
         permissionLauncher.launch(BLUETOOTH_PERMISSIONS)
     }
@@ -147,7 +147,7 @@ fun BluetoothScreen(navController: NavHostController) {
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
             )
 
-            // ── Route to correct state UI ─────────────────────────
+            //Route to correct state UI
             when (val state = connectionState) {
 
                 is ConnectionState.Disconnected -> DisconnectedContent(
@@ -194,7 +194,7 @@ fun BluetoothScreen(navController: NavHostController) {
     }
 }
 
-// ── DisconnectedContent ────────────────────────────────────────
+//DisconnectedContent
 @Composable
 private fun DisconnectedContent(
     devices:    List<BleDevice>,
@@ -214,7 +214,7 @@ private fun DisconnectedContent(
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
 
-        // ── Scan animation header ──────────────────────────────
+        //Scan animation header
         item {
             ScanHeader(
                 isScanning = isScanning,
@@ -223,7 +223,7 @@ private fun DisconnectedContent(
             )
         }
 
-        // ── Demo Mode button (always visible) ─────────────────
+        //Demo Mode button (always visible)
         item {
             OutlinedButton(
                 onClick  = onDemoMode,
@@ -246,7 +246,7 @@ private fun DisconnectedContent(
             }
         }
 
-        // ── Device list header ─────────────────────────────────
+        //Device list header
         if (devices.isNotEmpty()) {
             item {
                 Text(
@@ -258,7 +258,7 @@ private fun DisconnectedContent(
             }
         }
 
-        // ── Device cards ───────────────────────────────────────
+        //Device cards
         items(
             items = devices,
             key   = { it.address }
@@ -275,7 +275,7 @@ private fun DisconnectedContent(
             }
         }
 
-        // ── Scanning indicator ─────────────────────────────────
+        //Scanning indicator
         if (isScanning && devices.isEmpty()) {
             item {
                 Box(
@@ -295,7 +295,7 @@ private fun DisconnectedContent(
     }
 }
 
-// ── ScanHeader ────────────────────────────────────────────────
+//ScanHeader
 @Composable
 private fun ScanHeader(
     isScanning: Boolean,
@@ -424,7 +424,7 @@ private fun ScanHeader(
     }
 }
 
-// ── DeviceCard ────────────────────────────────────────────────
+//DeviceCard
 @Composable
 private fun DeviceCard(
     device:    BleDevice,
@@ -553,7 +553,7 @@ private fun DeviceCard(
     }
 }
 
-// ── ConnectingContent ─────────────────────────────────────────
+//ConnectingContent
 @Composable
 private fun ConnectingContent(
     deviceName: String,
@@ -595,7 +595,7 @@ private fun ConnectingContent(
     }
 }
 
-// ── ConnectedContent ──────────────────────────────────────────
+//ConnectedContent
 @Composable
 private fun ConnectedContent(
     device:       BleDevice,
@@ -612,7 +612,7 @@ private fun ConnectedContent(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // ── Success section ──────────────────────────────────────
+        //Success section
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -679,7 +679,7 @@ private fun ConnectedContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // ── Quick action buttons ──────────────────────────────
+        //Quick action buttons
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -743,7 +743,7 @@ private fun ConnectedContent(
     }
 }
 
-// ── FailedContent ─────────────────────────────────────────────
+//FailedContent
 @Composable
 private fun FailedContent(
     reason:    String,
@@ -818,7 +818,7 @@ private fun FailedContent(
     }
 }
 
-// ── EmptyDeviceState ──────────────────────────────────────────
+//EmptyDeviceState
 @Composable
 private fun EmptyDeviceState() {
     Box(
@@ -847,7 +847,7 @@ private fun EmptyDeviceState() {
     }
 }
 
-// ── DeviceInfoChip ────────────────────────────────────────────
+//DeviceInfoChip
 @Composable
 private fun DeviceInfoChip(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -866,7 +866,7 @@ private fun DeviceInfoChip(label: String, value: String) {
     }
 }
 
-// ── Previews ──────────────────────────────────────────────────
+//Previews
 @Preview(showBackground = true)
 @Composable
 private fun ConnectedContentPreview() {

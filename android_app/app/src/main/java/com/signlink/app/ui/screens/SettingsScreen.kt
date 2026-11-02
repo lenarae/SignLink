@@ -50,7 +50,7 @@ fun SettingsScreen(navController: NavHostController) {
         }
     }
 
-    // ── Reset to defaults dialog ──────────────────────────────
+    //Reset to defaults dialog
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.hideResetDialog() },
@@ -68,7 +68,7 @@ fun SettingsScreen(navController: NavHostController) {
         )
     }
 
-    // ── Clear data dialog ─────────────────────────────────────
+    //Clear data dialog
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.hideClearDataDialog() },
@@ -139,7 +139,7 @@ fun SettingsScreen(navController: NavHostController) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-            // ── 1. APPEARANCE ──────────────────────────────────
+            //1. APPEARANCE
             SettingsSection(title = stringResource(R.string.settings_appearance), icon = Icons.Filled.Palette) {
                 ThemeSetting(
                     current = settings.theme,
@@ -152,7 +152,7 @@ fun SettingsScreen(navController: NavHostController) {
                 )
             }
 
-            // ── 2. SPEECH OUTPUT (TTS) ─────────────────────────
+            //2. SPEECH OUTPUT (TTS)
             SettingsSection(title = stringResource(R.string.settings_tts), icon = Icons.Filled.RecordVoiceOver) {
 
                 SettingsToggleItem(
@@ -188,7 +188,7 @@ fun SettingsScreen(navController: NavHostController) {
                 )
             }
 
-            // ── 3. ACCESSIBILITY ───────────────────────────────
+            //3. ACCESSIBILITY
             SettingsSection(title = stringResource(R.string.settings_accessibility), icon = Icons.Filled.Accessibility) {
 
                 SettingsToggleItem(
@@ -200,7 +200,7 @@ fun SettingsScreen(navController: NavHostController) {
                 )
             }
 
-            // ── 4. DEVICE ──────────────────────────────────────
+            //4. DEVICE
             SettingsSection(title = stringResource(R.string.settings_device), icon = Icons.Filled.Watch) {
 
                 SettingsToggleItem(
@@ -220,7 +220,7 @@ fun SettingsScreen(navController: NavHostController) {
                 )
             }
 
-            // ── 5. DATA & STORAGE ──────────────────────────────
+            //5. DATA & STORAGE
             SettingsSection(title = stringResource(R.string.settings_data_storage), icon = Icons.Filled.Storage) {
 
                 SettingsToggleItem(
@@ -246,7 +246,7 @@ fun SettingsScreen(navController: NavHostController) {
                 )
             }
 
-            // ── 6. ABOUT ───────────────────────────────────────
+            // 6. ABOUT
             SettingsSection(title = stringResource(R.string.settings_about), icon = Icons.Filled.Info) {
 
                 SettingsInfoItem(label = "App version",    value = "1.0.0")
@@ -258,7 +258,7 @@ fun SettingsScreen(navController: NavHostController) {
                 SettingsInfoItem(label = "BLE Mode",       value = "Simulated (mock gestures)")
             }
 
-            // ── 7. RESET ───────────────────────────────────────
+            //7. RESET
             OutlinedButton(
                 onClick  = { viewModel.showResetDialog() },
                 modifier = Modifier
@@ -322,7 +322,7 @@ private fun SettingsSection(
     }
 }
 
-// ── SettingsToggleItem ────────────────────────────────────────
+//SettingsToggleItem
 @Composable
 private fun SettingsToggleItem(
     title:    String,
@@ -374,7 +374,7 @@ private fun SettingsToggleItem(
     }
 }
 
-// ── SettingsSliderItem ────────────────────────────────────────
+//SettingsSliderItem
 @Composable
 private fun SettingsSliderItem(
     title:        String,
@@ -444,7 +444,7 @@ private fun SettingsSliderItem(
     }
 }
 
-// ── ThemeSetting ──────────────────────────────────────────────
+//ThemeSetting
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ThemeSetting(
@@ -495,7 +495,7 @@ private fun ThemeSetting(
     }
 }
 
-// ── TextSizeSetting ────────────────────────────────────────────
+//TextSizeSetting
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TextSizeSetting(
@@ -548,7 +548,7 @@ private fun TextSizeSetting(
     }
 }
 
-// ── RetentionPolicySetting ────────────────────────────────────
+//RetentionPolicySetting
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RetentionPolicySetting(
@@ -627,7 +627,7 @@ private fun RetentionPolicySetting(
     }
 }
 
-// ── SettingsActionItem ────────────────────────────────────────
+//SettingsActionItem
 @Composable
 private fun SettingsActionItem(
     title:   String,
@@ -671,7 +671,7 @@ private fun SettingsActionItem(
     }
 }
 
-// ── SettingsInfoItem ──────────────────────────────────────────
+//SettingsInfoItem
 @Composable
 private fun SettingsInfoItem(label: String, value: String) {
     Row(
@@ -694,7 +694,7 @@ private fun SettingsInfoItem(label: String, value: String) {
     }
 }
 
-// ── SettingsDivider ───────────────────────────────────────────
+//SettingsDivider
 @Composable
 private fun SettingsDivider() {
     HorizontalDivider(

@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(navController: NavHostController) {
 
-    // ── Form state ────────────────────────────────────────────
+    //Form state
     var email          by remember { mutableStateOf("") }
     var password       by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -51,7 +51,7 @@ fun LoginScreen(navController: NavHostController) {
     val focusManager  = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
 
-    // ── Form validation ───────────────────────────────────────
+    //Form validation
     fun validate(): Boolean {
         var valid = true
 
@@ -72,7 +72,7 @@ fun LoginScreen(navController: NavHostController) {
         return valid
     }
 
-    // ── Submit handler ────────────────────────────────────────
+    //Submit handler
     fun onSignIn() {
         focusManager.clearFocus()
         if (!validate()) return
@@ -88,7 +88,7 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 
-    // ── UI ────────────────────────────────────────────────────
+    //UI
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -140,7 +140,7 @@ fun LoginScreen(navController: NavHostController) {
             ) {
                 Spacer(Modifier.height(24.dp))
 
-                // ── Header ────────────────────────────────────
+                // Header
                 Text(
                     text      = "Welcome back",
                     style     = MaterialTheme.typography.headlineMedium.copy(
@@ -157,7 +157,7 @@ fun LoginScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(40.dp))
 
-                // ── Email Field ───────────────────────────────
+                //Email Field
                 AuthTextField(
                     value         = email,
                     onValueChange = { email = it; emailError = null },
@@ -175,7 +175,7 @@ fun LoginScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Password Field ────────────────────────────
+                //Password Field
                 AuthTextField(
                     value         = password,
                     onValueChange = { password = it; passwordError = null },
@@ -210,7 +210,7 @@ fun LoginScreen(navController: NavHostController) {
                     errorMessage  = passwordError
                 )
 
-                // ── Forgot Password ───────────────────────────
+                //Forgot Password
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.CenterEnd
@@ -226,7 +226,7 @@ fun LoginScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(24.dp))
 
-                // ── Sign In Button ────────────────────────────
+                //Sign In Button
                 Button(
                     onClick  = { onSignIn() },
                     enabled  = !isLoading,

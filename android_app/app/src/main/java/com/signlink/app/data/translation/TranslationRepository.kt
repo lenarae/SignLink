@@ -14,21 +14,21 @@ class TranslationRepository @Inject constructor(
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // ── Translation status ────────────────────────────────────
+    // Translation status
     private val _status = MutableStateFlow(TranslationStatus.DISCONNECTED)
     val status: StateFlow<TranslationStatus> = _status.asStateFlow()
 
-    // ── Translation event stream ──────────────────────────────
+    // Translation event stream
     // replay=0: only new subscribers get new events (stream, not history)
     private val _events = MutableSharedFlow<TranslationEvent>(replay = 0)
     val events: SharedFlow<TranslationEvent> = _events.asSharedFlow()
 
-    // ── Session text accumulator ──────────────────────────────
+    //Session text accumulator
     // All translated words joined for the full-session display
     private val _sessionText = MutableStateFlow("")
     val sessionText: StateFlow<String> = _sessionText.asStateFlow()
 
-    // ── Translation paused flag ───────────────────────────────
+    //Translation paused flag
     private val _isPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> = _isPaused.asStateFlow()
 

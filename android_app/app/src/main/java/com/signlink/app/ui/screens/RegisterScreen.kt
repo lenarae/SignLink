@@ -61,7 +61,7 @@ fun RegisterScreen(navController: NavHostController) {
     val focusManager   = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
 
-    // ── Password strength calculator ──────────────────────────
+    // Password strength calculator
     // Returns 0–4: 0=empty, 1=weak, 2=fair, 3=good, 4=strong
     val passwordStrength = remember(password) {
         when {
@@ -74,7 +74,7 @@ fun RegisterScreen(navController: NavHostController) {
         }
     }
 
-    // ── Validate all fields ───────────────────────────────────
+    //Validate all fields
     fun validate(): Boolean {
         var valid = true
 
@@ -104,7 +104,7 @@ fun RegisterScreen(navController: NavHostController) {
         return valid
     }
 
-    // ── Submit ────────────────────────────────────────────────
+    //Submit
     fun onCreateAccount() {
         focusManager.clearFocus()
         if (!validate()) return
@@ -118,7 +118,7 @@ fun RegisterScreen(navController: NavHostController) {
         }
     }
 
-    // ── UI ────────────────────────────────────────────────────
+    //UI
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -177,7 +177,7 @@ fun RegisterScreen(navController: NavHostController) {
             ) {
                 Spacer(Modifier.height(16.dp))
 
-                // ── Header ────────────────────────────────────
+                //Header
                 Text(
                     text  = "Create account",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
@@ -192,7 +192,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(32.dp))
 
-                // ── Full Name ─────────────────────────────────
+                //Full Name
                 AuthTextField(
                     value         = fullName,
                     onValueChange = { fullName = it; nameError = null },
@@ -210,7 +210,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(14.dp))
 
-                // ── Email ─────────────────────────────────────
+                //Email
                 AuthTextField(
                     value         = email,
                     onValueChange = { email = it; emailError = null },
@@ -228,7 +228,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(14.dp))
 
-                // ── Password ──────────────────────────────────
+                //Password
                 AuthTextField(
                     value         = password,
                     onValueChange = { password = it; passError = null },
@@ -256,7 +256,7 @@ fun RegisterScreen(navController: NavHostController) {
                     errorMessage = passError
                 )
 
-                // ── Password Strength Indicator ───────────────
+                //Password Strength Indicator
                 if (password.isNotEmpty()) {
                     Spacer(Modifier.height(8.dp))
                     PasswordStrengthBar(strength = passwordStrength)
@@ -264,7 +264,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(14.dp))
 
-                // ── Confirm Password ──────────────────────────
+                //Confirm Password
                 AuthTextField(
                     value         = confirmPassword,
                     onValueChange = { confirmPassword = it; confirmError = null },
@@ -294,7 +294,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(20.dp))
 
-                // ── Terms checkbox ────────────────────────────
+                //Terms checkbox
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -322,7 +322,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 Spacer(Modifier.height(24.dp))
 
-                // ── Create Account Button ─────────────────────
+                //Create Account Button
                 Button(
                     onClick  = { onCreateAccount() },
                     enabled  = !isLoading,
@@ -365,7 +365,7 @@ fun RegisterScreen(navController: NavHostController) {
     }
 }
 
-// ── Password Strength Bar ──────────────────────────────────────
+// Password Strength Bar
 @Composable
 private fun PasswordStrengthBar(strength: Int) {
     val strengthLabel = when (strength) {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.*
 import java.util.Locale
 import javax.inject.Inject
 
-// ── Speech State sealed class ─────────────────────────────────
+//Speech State sealed class
 
 sealed class SpeechState {
     /** Mic is off.  */

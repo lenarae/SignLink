@@ -36,7 +36,7 @@ class ChatRepository @Inject constructor(
     fun getCurrentSessionId(): String = currentSessionId
     private fun generateSessionId(): String = UUID.randomUUID().toString()
 
-    // ── READ ──────────────────────────────────────────────────
+    //READ
 
     fun getAllMessages(): Flow<List<ChatMessage>>                    = chatDao.getAllMessages()
     fun getMessagesBySession(id: String): Flow<List<ChatMessage>>   = chatDao.getMessagesBySession(id)
@@ -44,7 +44,7 @@ class ChatRepository @Inject constructor(
     fun getMessageCount(): Flow<Int>                                = chatDao.getMessageCount()
     fun searchMessages(q: String): Flow<List<ChatMessage>>          = chatDao.searchMessages(q)
 
-    // ── WRITE (all respect storageEnabled setting) ────────────
+    //WRITE (all respect storageEnabled setting)
 
 
     suspend fun saveTranslation(text: String, confidence: Float? = null) {
@@ -94,7 +94,7 @@ class ChatRepository @Inject constructor(
         )
     }
 
-    // ── DELETE ─────────────────────────────────────────────────
+    //DELETE
 
     suspend fun deleteMessage(message: ChatMessage) = chatDao.deleteMessage(message)
     suspend fun deleteSession(sessionId: String)    = chatDao.deleteSession(sessionId)
@@ -122,7 +122,7 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    // ── PRIVATE ───────────────────────────────────────────────
+    // PRIVATE
     private suspend fun isStorageEnabled(): Boolean =
         settingsDataStore.settings.first().storageEnabled
 }

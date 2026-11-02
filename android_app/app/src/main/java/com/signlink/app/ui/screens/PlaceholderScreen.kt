@@ -40,13 +40,13 @@ fun PlaceholderScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)  // Space between items
         ) {
 
-            // ── Large Icon ────────────────────────────────────
+            //Large Icon
             Text(
                 text = icon,
                 fontSize = 72.sp
             )
 
-            // ── Screen Name ───────────────────────────────────
+            //Screen Name
             Text(
                 text = screenName,
                 style = MaterialTheme.typography.headlineMedium,
@@ -54,7 +54,7 @@ fun PlaceholderScreen(
                 textAlign = TextAlign.Center
             )
 
-            // ── Description ───────────────────────────────────
+            //Description
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyLarge,
@@ -64,7 +64,7 @@ fun PlaceholderScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── WIP Badge ─────────────────────────────────────
+            //WIP Badge
             Surface(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = MaterialTheme.shapes.medium

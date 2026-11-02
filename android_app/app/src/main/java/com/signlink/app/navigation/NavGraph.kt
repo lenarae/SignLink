@@ -26,34 +26,34 @@ fun SignLinkNavGraph(
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
 
-        // ── Onboarding ───────────────────────────────
+        //Onboarding
         composable(Screen.Welcome.route)  { WelcomeScreen(navController) }
         composable(Screen.UserType.route) { UserTypeScreen(navController) }
         composable(Screen.PairDevice.route) { PairDeviceScreen(navController) }
 
-        // ── Home ─────────────────────────────────────
+        //Home
         composable(Screen.Home.route) { HomeScreen(navController) }
 
-        // ── Bluetooth ────────────────────────────────
+        //Bluetooth
         composable(Screen.Bluetooth.route) { BluetoothScreen(navController) }
 
-        // ── Calibration ──────────────────────────────
+        //Calibration
         composable(Screen.Calibration.route) { CalibrationScreen(navController) }
 
-        // ── Translation ──────────────────────────────
+        //Translation
         composable(Screen.Translation.route) { TranslationScreen(navController) }
 
-        // ── Speech ───────────────────────────────────
+        //Speech
         composable(Screen.Speech.route) { SpeechScreen(navController) }
         composable(Screen.TextToSpeech.route) { TextToSpeechScreen(navController) }
 
-        // ── Chat History ─────────────────────────────
+        //Chat History
         composable(Screen.ChatHistory.route) { ChatHistoryScreen(navController) }
 
-        // ── Settings ─────────────────────────────────
+        //Settings
         composable(Screen.Settings.route) { SettingsScreen(navController) }
 
-        // ── Learning ─────────────────────────────────
+        //Learning
         composable(Screen.Learning.route) { LearningScreen(navController) }
     }
 }

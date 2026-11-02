@@ -66,7 +66,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
         )
     }
 
-    // ── Session drill-down ────────────────────────────────────
+    //Session drill-down
     if (selectedSessionId != null) {
         SessionDetailScreen(
             sessionId  = selectedSessionId!!,
@@ -119,7 +119,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
                     )
                 )
 
-                // ── Search bar ────────────────────────────────
+                //Search bar
                 OutlinedTextField(
                     value         = searchQuery,
                     onValueChange = { viewModel.setSearchQuery(it) },
@@ -143,7 +143,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
                     )
                 )
 
-                // ── View mode toggle ──────────────────────────
+                //View mode toggle
                 if (searchQuery.isEmpty()) {
                     Row(
                         modifier = Modifier
@@ -180,7 +180,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             when {
-                // ── Search results ─────────────────────────────
+                //Search results
                 searchQuery.isNotEmpty() -> {
                     if (displayedMessages.isEmpty()) {
                         item { HistoryEmptyState(isSearch = true, query = searchQuery, onSeed = {}) }
@@ -198,7 +198,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── By session view ────────────────────────────
+                //By session view
                 viewMode == HistoryViewMode.BY_SESSION -> {
                     if (sessionList.isEmpty()) {
                         item { HistoryEmptyState(isSearch = false, query = "", onSeed = { viewModel.seedDemoData() }) }
@@ -213,7 +213,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
                     }
                 }
 
-                // ── All messages view ──────────────────────────
+                //All messages view
                 else -> {
                     if (displayedMessages.isEmpty()) {
                         item { HistoryEmptyState(isSearch = false, query = "", onSeed = { viewModel.seedDemoData() }) }
@@ -229,7 +229,7 @@ fun ChatHistoryScreen(navController: NavHostController) {
     }
 }
 
-// ── MessageCard ────────────────────────────────────────────────
+//MessageCard
 @Composable
 private fun MessageCard(
     message:  ChatMessage,
@@ -300,7 +300,7 @@ private fun MessageCard(
     }
 }
 
-// ── SessionCard ────────────────────────────────────────────────
+//SessionCard
 @Composable
 private fun SessionCard(
     session:  SessionSummary,
@@ -352,7 +352,7 @@ private fun SessionCard(
     }
 }
 
-// ── SessionDetailScreen ───────────────────────────────────────
+//SessionDetailScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SessionDetailScreen(
@@ -395,7 +395,7 @@ private fun SessionDetailScreen(
     }
 }
 
-// ── SourceBadge ───────────────────────────────────────────────
+//SourceBadge
 @Composable
 private fun SourceBadge(source: MessageSource) {
     val (label, color) = when (source) {
@@ -417,7 +417,7 @@ private fun SourceBadge(source: MessageSource) {
     }
 }
 
-// ── HistoryEmptyState ─────────────────────────────────────────
+//HistoryEmptyState
 @Composable
 private fun HistoryEmptyState(
     isSearch: Boolean,
