@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -73,6 +74,18 @@ configure<ApplicationExtension> {
         // Enable Jetpack Compose
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
+configure<ApplicationAndroidComponentsExtension> {
+    beforeVariants { variantBuilder ->
+        (variantBuilder as? com.android.build.api.variant.HasUnitTestBuilder)?.enableUnitTest = true
+    }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -81,14 +94,6 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 
-// Force all configurations (including KSP/Hilt) to use metadata-jvm 0.9.0
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlinx" && requested.name == "kotlinx-metadata-jvm") {
-            useVersion("0.9.0")
-        }
-    }
-}
 
 dependencies {
     // ── Core Android ──────────────────────────────────────────
@@ -152,4 +157,9 @@ tasks.register("unitTestClasses") {
     group = "verification"
     description = "Assembles all unit test classes."
     dependsOn(tasks.matching { it.name.endsWith("UnitTestClasses") })
+}
+
+tasks.register("prepareKotlinBuildScriptModel") {
+    group = "build"
+    description = "Placeholder task for Kotlin build script model preparation."
 }

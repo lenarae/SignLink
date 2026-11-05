@@ -169,7 +169,7 @@ private fun ConnectionStatusCard(connectionState: ConnectionState, onTap: () -> 
         else -> SignLinkTheme.colors.error
     }
     val statusText = when (connectionState) {
-        is ConnectionState.Connected -> "Connected — ${connectionState.device.displayName}"
+        is ConnectionState.Connected -> connectionState.device.displayName
         is ConnectionState.Connecting -> "Connecting..."
         is ConnectionState.Scanning -> "Scanning for devices..."
         is ConnectionState.Failed -> "Connection Failed"
@@ -180,58 +180,77 @@ private fun ConnectionStatusCard(connectionState: ConnectionState, onTap: () -> 
         is ConnectionState.Connecting, is ConnectionState.Scanning -> Icons.Filled.Bluetooth
         else -> Icons.Filled.BluetoothDisabled
     }
-    val actionText = when (connectionState) {
-        is ConnectionState.Connected -> "Tap to manage"
-        is ConnectionState.Connecting -> "Establishing connection..."
-        is ConnectionState.Scanning -> "Looking for wristband..."
-        is ConnectionState.Failed -> "Tap to retry"
-        is ConnectionState.Disconnected -> "Tap to connect"
+    val device = if (connectionState is ConnectionState.Connected) connectionState.device else null
+    val isCompatible = device?.isSignLinkDevice == true
+    val batteryPercent = if (device?.isSimulated == true) 92 else 85
+    val deviceType = getDeviceCategory(device?.name)
+
+    val subtitle = when {
+        connectionState is ConnectionState.Connected -> "🔋 $batteryPercent% · $deviceType · ${if (isCompatible) "EMG Active" else "No EMG Support"}"
+        connectionState is ConnectionState.Connecting -> "Establishing connection..."
+        connectionState is ConnectionState.Scanning -> "Looking for wristband..."
+        connectionState is ConnectionState.Failed -> "Tap to retry"
+        else -> "Tap to connect Bluetooth devices"
     }
 
     Card(
         onClick = onTap,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
         ),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .size(46.dp)
                     .clip(CircleShape)
                     .background(statusColor.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(statusIcon, null, tint = statusColor, modifier = Modifier.size(28.dp))
+                Icon(statusIcon, null, tint = statusColor, modifier = Modifier.size(24.dp))
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    stringResource(R.string.home_wristband_status),
+                    text = if (connectionState is ConnectionState.Connected) "Connected Device" else "Wristband Status",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    statusText,
+                    text = statusText,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = statusColor
+                    color = statusColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    actionText,
+                    text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             Icon(Icons.Filled.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+private fun getDeviceCategory(name: String?): String {
+    val lower = name?.lowercase() ?: ""
+    return when {
+        lower.contains("bud") || lower.contains("headphone") || lower.contains("earphone") || lower.contains("audio") || lower.contains("speaker") -> "Audio Headset"
+        lower.contains("watch") || lower.contains("band") || lower.contains("fitness") -> "Fitness Tracker"
+        lower.contains("signlink") -> "EMG Wristband"
+        else -> "Bluetooth Accessory"
     }
 }
 

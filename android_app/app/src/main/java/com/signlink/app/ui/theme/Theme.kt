@@ -39,62 +39,62 @@ object SignLinkTheme {
         get() = LocalSignLinkColors.current
 }
 
-//Light Color Scheme
+//Light Color Scheme (Clean, airy, professional light slate/blue aesthetic)
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF008399),
+    primary = Color(0xFF0284C7),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFADEAFF),
-    onPrimaryContainer = Color(0xFF001F26),
-    
-    secondary = Color(0xFF006173),
+    primaryContainer = Color(0xFFE0F2FE),
+    onPrimaryContainer = Color(0xFF082F49),
+
+    secondary = Color(0xFF475569),
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFADEAFF),
-    onSecondaryContainer = Color(0xFF00363F),
-    
-    tertiary = Color(0xFF6D5677),
+    secondaryContainer = Color(0xFFF1F5F9),
+    onSecondaryContainer = Color(0xFF1E293B),
+
+    tertiary = Color(0xFF7C3AED),
     onTertiary = Color.White,
-    tertiaryContainer = Color(0xFFF6D9FF),
-    onTertiaryContainer = Color(0xFF251431),
-    
+    tertiaryContainer = Color(0xFFF5F3FF),
+    onTertiaryContainer = Color(0xFF2E1065),
+
     error = Error,
     onError = Color.White,
-    
-    background = Color(0xFFD6F6FF),
-    onBackground = Color(0xFF001F26),
+
+    background = Color(0xFFF8FAFC),
+    onBackground = Color(0xFF0F172A),
     surface = Color.White,
-    onSurface = Color(0xFF001F26),
-    surfaceVariant = Color(0xFFADEAFF),
-    onSurfaceVariant = Color(0xFF004F5C),
-    outline = Color(0xFF00697A)
+    onSurface = Color(0xFF0F172A),
+    surfaceVariant = Color(0xFFF1F5F9),
+    onSurfaceVariant = Color(0xFF334155),
+    outline = Color(0xFF94A3B8)
 )
 
-//Dark Color Scheme
+//Dark Color Scheme (Hand icon changed to White)
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF00E5FF),
-    onPrimary = Color(0xFF001F26),
-    primaryContainer = Color(0xFF004F5C),
-    onPrimaryContainer = Color(0xFFADEAFF),
-    
-    secondary = Color(0xFF55D6F3),
-    onSecondary = Color(0xFF00363F),
-    secondaryContainer = Color(0xFF00363F),
-    onSecondaryContainer = Color(0xFFADEAFF),
-    
-    tertiary = Color(0xFFD9BDE3),
-    onTertiary = Color(0xFF251431),
-    tertiaryContainer = Color(0xFF6D5677),
-    onTertiaryContainer = Color(0xFFF6D9FF),
-    
-    error = Color(0xFFE57373),
-    onError = Color(0xFF310001),
-    
-    background = Color(0xFF001D26),
-    onBackground = Color(0xFFADEAFF),
-    surface = Color(0xFF001F26),
-    onSurface = Color(0xFFADEAFF),
-    surfaceVariant = Color(0xFF00363F),
-    onSurfaceVariant = Color(0xFFADEAFF),
-    outline = Color(0xFF00697A)
+    primary = Color.White,
+    onPrimary = Color(0xFF082F49),
+    primaryContainer = Color(0xFF0284C7),
+    onPrimaryContainer = Color(0xFFF0F9FF),
+
+    secondary = Color(0xFF94A3B8),
+    onSecondary = Color(0xFF0F172A),
+    secondaryContainer = Color(0xFF1E293B),
+    onSecondaryContainer = Color(0xFFE2E8F0),
+
+    tertiary = Color(0xFFC4B5FD),
+    onTertiary = Color(0xFF2E1065),
+    tertiaryContainer = Color(0xFF5B21B6),
+    onTertiaryContainer = Color(0xFFF5F3FF),
+
+    error = Color(0xFFF87171),
+    onError = Color(0xFF450A0A),
+
+    background = Color(0xFF0A0E17),
+    onBackground = Color(0xFFF1F5F9),
+    surface = Color(0xFF131B2E),
+    onSurface = Color(0xFFF1F5F9),
+    surfaceVariant = Color(0xFF1E293B),
+    onSurfaceVariant = Color(0xFFCBD5E1),
+    outline = Color(0xFF475569)
 )
 
 //High Contrast Color Scheme

@@ -33,9 +33,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.signlink.app.navigation.Screen
+import com.signlink.app.ui.components.ConnectionStatusChip
 import com.signlink.app.ui.theme.*
 import com.signlink.app.utils.SpeechState
 import com.signlink.app.utils.TtsState
+import com.signlink.app.viewmodel.BluetoothViewModel
 import com.signlink.app.viewmodel.SpeechViewModel
 import com.signlink.app.viewmodel.TranscriptEntry
 import java.text.SimpleDateFormat
@@ -46,6 +48,8 @@ import java.util.*
 fun SpeechScreen(navController: NavHostController) {
 
     val viewModel: SpeechViewModel = hiltViewModel()
+    val bluetoothViewModel: BluetoothViewModel = hiltViewModel()
+    val connectionState by bluetoothViewModel.connectionState.collectAsStateWithLifecycle()
 
     val speechState  by viewModel.speechState.collectAsStateWithLifecycle()
     val isListening  by viewModel.isListening.collectAsStateWithLifecycle()
@@ -158,6 +162,15 @@ fun SpeechScreen(navController: NavHostController) {
                 contentPadding  = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Connection status chip
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        ConnectionStatusChip(connectionState = connectionState)
+                    }
+                }
 
             //Mic button section
             item {

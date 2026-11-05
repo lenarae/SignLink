@@ -6,9 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-
 val SignLinkTypography = Typography(
-
     // ── Display ── (largest text, used for splash/hero)
     displayLarge = TextStyle(
         fontFamily = FontFamily.Default,

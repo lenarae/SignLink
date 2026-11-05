@@ -26,14 +26,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.signlink.app.navigation.Screen
+import com.signlink.app.ui.components.ConnectionStatusChip
 import com.signlink.app.ui.theme.*
 import com.signlink.app.utils.TtsState
+import com.signlink.app.viewmodel.BluetoothViewModel
 import com.signlink.app.viewmodel.TextToSpeechViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextToSpeechScreen(navController: NavHostController) {
     val viewModel: TextToSpeechViewModel = hiltViewModel()
+    val bluetoothViewModel: BluetoothViewModel = hiltViewModel()
+    val connectionState by bluetoothViewModel.connectionState.collectAsStateWithLifecycle()
     val textInput by viewModel.textInput.collectAsStateWithLifecycle()
     val ttsState by viewModel.ttsState.collectAsStateWithLifecycle()
 
@@ -103,6 +107,8 @@ fun TextToSpeechScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
+                ConnectionStatusChip(connectionState = connectionState)
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

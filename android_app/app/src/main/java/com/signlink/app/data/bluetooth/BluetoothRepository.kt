@@ -1,154 +1,241 @@
 package com.signlink.app.data.bluetooth
 
+import android.annotation.SuppressLint
+import android.bluetooth.*
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.random.Random
 
 @Singleton
 @OptIn(ExperimentalCoroutinesApi::class)
 class BluetoothRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // ── Coroutine scope ───────────────────────────────────────
-    // SupervisorJob: if one child coroutine fails, others keep running
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // ── Connection state ──────────────────────────────────────
+    private val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+    private val bluetoothAdapter = bluetoothManager?.adapter
+    private val bluetoothLeScanner: BluetoothLeScanner?
+        get() = bluetoothAdapter?.bluetoothLeScanner
+
     private val _connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     val connectionState: StateFlow<ConnectionState> = _connectionState.asStateFlow()
 
-    // ── Discovered devices ────────────────────────────────────
     private val _discoveredDevices = MutableStateFlow<List<BleDevice>>(emptyList())
     val discoveredDevices: StateFlow<List<BleDevice>> = _discoveredDevices.asStateFlow()
 
-    // ── Gesture stream ────────────────────────────────────────
     private val _gestureStream = MutableSharedFlow<String>(replay = 1)
     val gestureStream: SharedFlow<String> = _gestureStream.asSharedFlow()
 
-    // ── Internal state ────────────────────────────────────────
-    private var scanJob:    Job? = null   // Reference to stop the scan
-    private var streamJob:  Job? = null   // Reference to stop the stream
-    private var mockGestureIndex = 0      // Cycles through MOCK_GESTURES list
+    private var scanJob: Job? = null
+    private var streamJob: Job? = null
+    private var bluetoothGatt: BluetoothGatt? = null
+    private var mockGestureIndex = 0
 
+    private val scanCallback = object : ScanCallback() {
+        @SuppressLint("MissingPermission")
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            val device = result.device
+            val name = try {
+                device.name
+            } catch (_: SecurityException) {
+                null
+            } ?: result.scanRecord?.deviceName
+            val address = device.address
+            val rssi = result.rssi
 
-    fun startScan() {
-        // Don't start a new scan if already scanning or connected
-        if (_connectionState.value is ConnectionState.Scanning) return
-
-        scanJob?.cancel()
-        _discoveredDevices.value = emptyList()
-        _connectionState.value   = ConnectionState.Scanning
-
-        scanJob = scope.launch {
-            // ── Simulate finding nearby generic devices ────────
-            delay(800)
-            addMockDevice(
-                BleDevice(
-                    address = "AA:11:22:33:44:55",
-                    name    = "Galaxy Buds",
-                    rssi    = -72
-                )
+            val bleDevice = BleDevice(
+                address = address,
+                name = name,
+                rssi = rssi,
+                isSimulated = false
             )
-            delay(1200)
-            addMockDevice(
-                BleDevice(
-                    address = "BB:22:33:44:55:66",
-                    name    = "Xiaomi Band 8",
-                    rssi    = -68
-                )
-            )
+            addDiscoveredDevice(bleDevice)
+        }
 
-            // ── Simulate finding the SignLink wristband ────────
-            delay(1500)
-            addMockDevice(
-                BleDevice(
-                    address     = BleConstants.SIMULATED_DEVICE_ADDRESS,
-                    name        = BleConstants.SIMULATED_DEVICE_NAME,
-                    rssi        = BleConstants.SIMULATED_DEVICE_RSSI,
-                    isSimulated = true
-                )
-            )
-
-            // ── Auto-stop after scan duration ─────────────────
-            delay(BleConstants.SCAN_DURATION_MS - 3_500)
-            if (_connectionState.value is ConnectionState.Scanning) {
-                _connectionState.value = ConnectionState.Disconnected
-            }
+        override fun onScanFailed(errorCode: Int) {
+            // handle scan error if needed
         }
     }
 
-    /**
-     * Stop any ongoing BLE scan without connecting.
-     */
+    @SuppressLint("MissingPermission")
+    fun startScan() {
+        if (_connectionState.value is ConnectionState.Scanning) return
+
+        // Check if Bluetooth is enabled
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+            _connectionState.value = ConnectionState.Failed(
+                "Bluetooth is turned off. Please turn on Bluetooth in your device settings."
+            )
+            return
+        }
+
+        scanJob?.cancel()
+        _discoveredDevices.value = emptyList()
+        _connectionState.value = ConnectionState.Scanning
+
+        // 1. Add already bonded / paired devices first
+        try {
+            bluetoothAdapter.bondedDevices?.forEach { device ->
+                val bondedBleDevice = BleDevice(
+                    address = device.address,
+                    name = device.name,
+                    rssi = -50,
+                    isSimulated = false
+                )
+                addDiscoveredDevice(bondedBleDevice)
+            }
+        } catch (_: SecurityException) {
+            // Missing BLUETOOTH_CONNECT permission
+        }
+
+        // 2. Start BLE scanning
+        try {
+            val settings = ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .build()
+            bluetoothLeScanner?.startScan(null, settings, scanCallback)
+        } catch (_: SecurityException) {
+            _connectionState.value = ConnectionState.Failed(
+                "Bluetooth permissions not granted. Please grant scan permission."
+            )
+            return
+        }
+
+        // Auto-stop scan after duration
+        scanJob = scope.launch {
+            delay(BleConstants.SCAN_DURATION_MS)
+            stopScan()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
     fun stopScan() {
+        try {
+            bluetoothLeScanner?.stopScan(scanCallback)
+        } catch (_: SecurityException) {
+            // ignore
+        }
         scanJob?.cancel()
         if (_connectionState.value is ConnectionState.Scanning) {
             _connectionState.value = ConnectionState.Disconnected
         }
     }
 
-
+    @SuppressLint("MissingPermission")
     fun connect(device: BleDevice) {
         stopScan()
+
+        if (device.isSimulated) {
+            connectSimulatedInternal(device)
+            return
+        }
+
         _connectionState.value = ConnectionState.Connecting(device.displayName)
 
         scope.launch {
-            // Simulate connection handshake delay
-            delay(2000)
+            try {
+                val btDevice = bluetoothAdapter?.getRemoteDevice(device.address)
+                if (btDevice == null) {
+                    _connectionState.value = ConnectionState.Failed("Device not found.")
+                    return@launch
+                }
 
-            if (device.isSignLinkDevice) {
-                _connectionState.value = ConnectionState.Connected(device)
-                startGestureStream()
-            } else {
-                delay(1000)
+                try {
+                    bluetoothGatt?.close()
+                } catch (_: Exception) {}
+
+                bluetoothGatt = btDevice.connectGatt(context, false, object : BluetoothGattCallback() {
+                    override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+                        if (newState == BluetoothProfile.STATE_CONNECTED) {
+                            _connectionState.value = ConnectionState.Connected(device)
+                            try {
+                                gatt.discoverServices()
+                            } catch (_: SecurityException) { }
+                            startGestureStream()
+                        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                            _connectionState.value = ConnectionState.Disconnected
+                            try {
+                                bluetoothGatt?.close()
+                            } catch (_: Exception) {}
+                            bluetoothGatt = null
+                            streamJob?.cancel()
+                        }
+                    }
+
+                    override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+                        // Services discovered
+                    }
+                }, BluetoothDevice.TRANSPORT_LE)
+
+            } catch (e: SecurityException) {
                 _connectionState.value = ConnectionState.Failed(
-                    "Device not recognized as a SignLink wristband. " +
-                            "Make sure your device is powered on and in range."
+                    "Bluetooth connect permission missing: ${e.localizedMessage}"
+                )
+            } catch (e: Exception) {
+                _connectionState.value = ConnectionState.Failed(
+                    "Connection failed: ${e.localizedMessage}"
                 )
             }
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun disconnect() {
         streamJob?.cancel()
+        try {
+            bluetoothGatt?.disconnect()
+            bluetoothGatt?.close()
+        } catch (_: Exception) { }
+        bluetoothGatt = null
         _connectionState.value = ConnectionState.Disconnected
         _gestureStream.resetReplayCache()
-        // REAL BLE: bluetoothGatt?.disconnect(); bluetoothGatt?.close()
     }
 
-
     fun retry() {
-        _connectionState.value = ConnectionState.Disconnected
-        _discoveredDevices.value = emptyList()
+        disconnect()
         startScan()
     }
 
-
     fun connectSimulated() {
         val simulatedDevice = BleDevice(
-            address     = BleConstants.SIMULATED_DEVICE_ADDRESS,
-            name        = BleConstants.SIMULATED_DEVICE_NAME,
-            rssi        = BleConstants.SIMULATED_DEVICE_RSSI,
+            address = BleConstants.SIMULATED_DEVICE_ADDRESS,
+            name = BleConstants.SIMULATED_DEVICE_NAME,
+            rssi = BleConstants.SIMULATED_DEVICE_RSSI,
             isSimulated = true
         )
         connect(simulatedDevice)
     }
 
-
-    private fun addMockDevice(device: BleDevice) {
-        val current = _discoveredDevices.value.toMutableList()
-        if (current.none { it.address == device.address }) {
-            // Randomize RSSI slightly to simulate real signal fluctuation
-            val jitteredRssi = device.rssi + Random.nextInt(-5, 5)
-            current.add(device.copy(rssi = jitteredRssi))
-            _discoveredDevices.value = current
+    private fun connectSimulatedInternal(device: BleDevice) {
+        _connectionState.value = ConnectionState.Connecting(device.displayName)
+        scope.launch {
+            delay(2000)
+            _connectionState.value = ConnectionState.Connected(device)
+            startGestureStream()
         }
     }
 
+    private fun addDiscoveredDevice(device: BleDevice) {
+        val current = _discoveredDevices.value.toMutableList()
+        if (current.none { it.address == device.address }) {
+            current.add(device)
+            _discoveredDevices.value = current
+        } else {
+            val index = current.indexOfFirst { it.address == device.address }
+            if (index != -1) {
+                current[index] = current[index].copy(rssi = device.rssi, name = device.name ?: current[index].name)
+                _discoveredDevices.value = current
+            }
+        }
+    }
 
     private fun startGestureStream() {
         streamJob?.cancel()

@@ -618,7 +618,7 @@ private fun ConnectedContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Green check icon (Circular)
-            val statusColor = if (isSystemInDarkTheme()) SignLinkTheme.colors.success else Color(0xFF008955)
+            val statusColor = SignLinkTheme.colors.success
             Box(
                 modifier = Modifier
                     .size(100.dp)

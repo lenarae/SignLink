@@ -316,7 +316,11 @@ private fun InProgressContent(
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            val progressValue = if (state.stepState is CalibrationStepState.Running) (state.stepState as CalibrationStepState.Running).progress else if (state.stepState is CalibrationSessionState.Complete) 1f else 0f
+            val progressValue = when (val stepState = state.stepState) {
+                is CalibrationStepState.Running -> stepState.progress
+                is CalibrationStepState.Done -> 1f
+                else -> 0f
+            }
             LinearProgressIndicator(progress = { progressValue }, modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)), color = MaterialTheme.colorScheme.primary, trackColor = MaterialTheme.colorScheme.surfaceVariant)
             Spacer(Modifier.height(8.dp))
             Text(text = stringResource(R.string.calibration_hold_steady), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
